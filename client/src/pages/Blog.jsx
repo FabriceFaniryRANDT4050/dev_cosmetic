@@ -1,5 +1,67 @@
-import React from "react";
+import React, { useRef, useEffect, useState } from "react";
 import Pagination from "../components/Pagination";
+
+// ====================================================================
+// COMPOSANT RÉUTILISABLE POUR L'ANIMATION (Intersection Observer)
+// ====================================================================
+const ScrollFadeIn = ({ children, direction = 'up', delay = 0, threshold = 0.1 }) => {
+    const ref = useRef(null);
+    const [isVisible, setIsVisible] = useState(false);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setIsVisible(true);
+                    // Arrêter d'observer une fois l'élément apparu
+                    observer.unobserve(entry.target); 
+                }
+            },
+            // Le seuil doit être ajusté pour les petits éléments de liste
+            { threshold: threshold } 
+        );
+
+        if (ref.current) {
+            observer.observe(ref.current);
+        }
+
+        return () => {
+            if (ref.current) {
+                observer.unobserve(ref.current);
+            }
+        };
+    }, [threshold]);
+
+    // Détermine la classe de translation initiale (invisible)
+    const getInitialTranslate = () => {
+        switch (direction) {
+            case 'left': return 'translate-x-[-50px]';
+            case 'right': return 'translate-x-[50px]';
+            case 'up':
+            default: return 'translate-y-[30px]';
+        }
+    };
+    
+    // Classes de transition et d'état
+    const classes = `
+        transition-all duration-700 ease-out 
+        ${isVisible ? 'opacity-100 translate-x-0 translate-y-0' : `opacity-0 ${getInitialTranslate()}`}
+    `;
+
+    // Le style 'transition-delay' est appliqué pour stagger les animations
+    const style = { transitionDelay: `${delay}ms` };
+
+    return (
+        <div ref={ref} className={classes} style={style}>
+            {children}
+        </div>
+    );
+};
+
+
+// ====================================================================
+// COMPOSANT PRINCIPAL BLOGPAGE
+// ====================================================================
 
 const BlogPage = () => {
   const produits = [
@@ -41,100 +103,116 @@ const BlogPage = () => {
       image: "https://via.placeholder.com/150x100.png?text=Produit",
     },
   ];
+  
+  // Couleurs de votre thème pour le style
+  const primaryColor = 'text-[#6b4226]'; 
+  const accentButton = 'bg-[#8b5e3c] hover:bg-[#6b4226]';
+  const lightAccent = 'text-[#8b5e3c]';
+
 
   return (
-    <div className="p-4 max-w-5xl mx-auto">
-      {/* Barre de recherche */}
-      <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
-        <div className="flex items-center gap-4">
-          <span className="font-bold text-lg">BLOG</span>
-          <button className="p-2 border-2 cursor-pointer"> 
-              <svg
-                  className="w-5 h-5 text-light-900"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  xmlns="http://www.w3.org/2000/svg"
+    <div className="p-4 max-w-5xl mx-auto bg-[#fdf6ec]">
+      
+      {/* Barre de recherche et En-tête (Animation d'apparition globale) */}
+      <ScrollFadeIn direction='up' delay={0} threshold={0.1}>
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
+          <div className="flex items-center gap-4">
+            <span className={`font-bold text-lg ${primaryColor}`}>BLOG</span>
+            <button className={`p-2 border-2 cursor-pointer border-[#8b5e3c] hover:bg-[#8b5e3c]/10 rounded-full`}> 
+                <svg
+                    className="w-5 h-5 text-[#8b5e3c]"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    xmlns="http://www.w3.org/2000/svg"
                 >
-                  <path d="M4 6h16M7 12h10M10 18h4" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M4 6h16M7 12h10M10 18h4" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
-          </button>
-        </div>
-        <div className="flex items-center border rounded-full px-4 py-2 w-full md:w-1/3">
-          <input
-            type="text"
-            placeholder="RECHERCHE COMMANDE"
-            className="flex-grow outline-none text-sm"
-          />
-        <button className="btn btn-ghost btn-circle">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /> </svg>
-        </button>
-        </div>
-      </div>
-
-      {/* Liste des produits */}
-      <h2 className="font-bold text-left text-lg mb-4">Plus récents</h2>
-      <div className="space-y-4">
-        {produits.map((produit) => (
-          <div
-            key={produit.id}
-            className="flex flex-col md:flex-row items-start bg-white shadow-md rounded-xl p-4"
-          >
-            {/* Image */}
-            <img
-              src='public\image\MonLogo.png'
-              alt={produit.titre}
-              className="w-full h-full md:w-40 object-cover rounded-lg"
+            </button>
+          </div>
+          <div className="flex items-center border border-[#d4bfa4] rounded-full px-4 py-2 w-full md:w-1/3 bg-white shadow-sm">
+            <input
+              type="text"
+              placeholder="RECHERCHER UN ARTICLE"
+              className={`flex-grow outline-none text-sm bg-transparent ${primaryColor} placeholder:text-stone-400`}
             />
+            <button className="btn btn-ghost btn-circle">
+              <svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 ${lightAccent}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /> </svg>
+            </button>
+          </div>
+        </div>
+      </ScrollFadeIn>
 
-            {/* Contenu texte */}
-            <div className="flex-1 md:ml-4 mt-3 md:mt-0 flex flex-col justify-between">
-              <div>
-                <div className="flex justify-between items-center">
-                  <h3 className="font-semibold text-amber-700 text-2xl">{produit.titre}</h3>
-                  <span className="text-sm text-gray-500">{produit.temps}</span>
-                </div>
-                {/* Étoiles */}
-                <div className="text-yellow-400 text-3xl text-left mb-1">
-                  {"★".repeat(produit.note) + "☆".repeat(5 - produit.note)}
-                </div>
-                <p className="text-sm text-left text-gray-600">{produit.description}</p>
-              </div>
+      {/* Liste des produits (Animation de cascade) */}
+      <ScrollFadeIn direction='up' delay={100} threshold={0.1}>
+        <h2 className={`font-bold text-left text-lg mb-4 ${primaryColor}`}>Plus récents</h2>
+      </ScrollFadeIn>
 
-              {/* Bouton bien centré */}
-              <div className="mt-3 flex">
-                <button className="bg-[#d6a86b] cursor-pointer text-white px-4 py-2 rounded-full text-sm font-semibold mx-auto md:mx-0">
-                  En savoir plus
-                </button>
+      <div className="space-y-4">
+        {produits.map((produit, index) => (
+          // Animation pour chaque article avec un délai croissant
+          <ScrollFadeIn key={produit.id} direction='up' delay={100 * (index + 1)} threshold={0.3}>
+            <div
+              className="flex flex-col md:flex-row items-start bg-white shadow-lg rounded-xl p-4 transition-transform hover:scale-[1.005] duration-300 border border-stone-100"
+            >
+              {/* Image */}
+              <img
+                src='public\image\beauty.jpg'
+                alt={produit.titre}
+                // Ajustement de la taille de l'image
+                className="w-full h-48 md:w-56 md:h-32 object-cover rounded-lg mb-3 md:mb-0"
+              />
+
+              {/* Contenu texte */}
+              <div className="flex-1 md:ml-4 flex flex-col justify-between">
+                <div>
+                  <div className="flex justify-between items-center">
+                    <h3 className={`font-semibold ${lightAccent} text-xl`}>{produit.titre}</h3>
+                    <span className="text-sm text-stone-500">{produit.temps}</span>
+                  </div>
+                  {/* Étoiles */}
+                  <div className="text-amber-500 text-2xl text-left mb-1">
+                    {"★".repeat(produit.note) + "☆".repeat(5 - produit.note)}
+                  </div>
+                  <p className="text-sm text-left text-stone-600 leading-relaxed">{produit.description}</p>
+                </div>
+
+                {/* Bouton bien centré */}
+                <div className="mt-4 flex">
+                  <button className={`${accentButton} cursor-pointer text-white px-5 py-2 rounded-full text-sm font-semibold transition duration-200`}>
+                    Lire l'article
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
+          </ScrollFadeIn>
         ))}
       </div>
       
 
-      {/* Section Astuces */}
-      <div className="mt-10 border-t pt-4">
-        <h2 className="font-bold text-lg mb-2">Astuces</h2>
-        <p className="text-sm text-gray-600 leading-relaxed">
-          Véritable baume de soin, cette base masque capillaire neutre, certifiée
-          BIO, riche en huiles végétales de Jojoba, Ricin et beurre de Karité,
-          protège, lisse et nourrit vos cheveux. Sa texture souple et légère
-          permet de l’utiliser comme masque cheveux ou comme après-shampoing,
-          pour faciliter le démêlage, apporter brillance, souplesse et douceur à
-          votre chevelure. Elle sera également idéale comme soin sans rinçage
-          pour gainer, nourrir et sublimer vos longueurs et pointes. Utilisée
-          pure ou agrémentée de fragrances, actifs et/ou huiles…
-        </p>
-      </div>
-      {/* <div className="join">
-        <button className="join-item btn">«</button>
-        <button className="join-item btn">Page 22</button>
-        <button className="join-item btn">»</button>
-        </div> */}
+      {/* Section Astuces (Animation) */}
+      <ScrollFadeIn direction='up' delay={200} threshold={0.1}>
+        <div className="mt-12 border-t border-[#d4bfa4] pt-8">
+          <h2 className={`font-bold text-lg mb-4 ${primaryColor}`}>Astuces & Conseils</h2>
+          <p className="text-base text-stone-600 leading-relaxed font-light">
+            Véritable baume de soin, cette base masque capillaire neutre, certifiée
+            BIO, riche en huiles végétales de Jojoba, Ricin et beurre de Karité,
+            protège, lisse et nourrit vos cheveux. Sa texture souple et légère
+            permet de l’utiliser comme masque cheveux ou comme après-shampoing,
+            pour faciliter le démêlage, apporter brillance, souplesse et douceur à
+            votre chevelure. Elle sera également idéale comme soin sans rinçage
+            pour gainer, nourrir et sublimer vos longueurs et pointes. Utilisée
+            pure ou agrémentée de fragrances, actifs et/ou huiles…
+          </p>
+        </div>
+      </ScrollFadeIn>
 
-
-        {Pagination}
+      {/* Pagination (Animation) */}
+      <ScrollFadeIn direction='up' delay={300} threshold={0.1}>
+          <div className="mt-8">
+             <Pagination/>
+          </div>
+      </ScrollFadeIn>
     </div>
   );
 };

@@ -89,45 +89,12 @@ const SignUpPage = () => {
                     Créez votre compte
                 </h2>
 
-                {/* --- Boutons d'Inscription Sociale (plus efficaces) --- */}
-                <div className="space-y-4">
-                    <button
-                        onClick={() => handleSocialLogin('Google')}
-                        // Style Google plus clair, accent sur l'icône
-                        className="w-full flex items-center justify-center py-3 px-4 border border-stone-300 rounded-lg shadow-md text-sm font-medium text-stone-700 bg-white hover:bg-stone-50 transition duration-150 ease-in-out transform hover:scale-[1.01]"
-                    >
-                        <GoogleIcon />
-                        S'inscrire avec **Google**
-                    </button>
-
-                    <button
-                        onClick={() => handleSocialLogin('Facebook')}
-                        // Style Facebook plus clair
-                        className="w-full flex items-center justify-center py-3 px-4 border border-stone-300 rounded-lg shadow-md text-sm font-medium text-stone-700 bg-white hover:bg-stone-50 transition duration-150 ease-in-out transform hover:scale-[1.01]"
-                    >
-                        <FacebookIcon className="text-blue-600" />
-                        S'inscrire avec **Facebook**
-                    </button>
-                </div>
-
-                {/* --- Séparateur OU --- */}
-                <div className="relative">
-                    <div className="absolute inset-0 flex items-center">
-                        <div className="w-full border-t border-stone-300"></div>
-                    </div>
-                    <div className="relative flex justify-center text-sm">
-                        <span className="px-2 bg-white text-stone-600">
-                            OU S'inscrire avec l'e-mail
-                        </span>
-                    </div>
-                </div>
-
                 {/* --- Formulaire d'Inscription Traditionnel --- */}
                 <form className="space-y-6" onSubmit={handleSignUp}>
                     
                     {/* Champ Nom Complet */}
                     <div>
-                        <label htmlFor="name" className="block text-sm font-medium text-stone-700">
+                        <label htmlFor="name" className="block text-left text-sm font-medium text-stone-700">
                             Nom Complet
                         </label>
                         <div className="mt-1">
@@ -147,7 +114,7 @@ const SignUpPage = () => {
 
                     {/* Champ Adresse E-mail */}
                     <div>
-                        <label htmlFor="email" className="block text-sm font-medium text-stone-700">
+                        <label htmlFor="email" className="block text-left text-sm font-medium text-stone-700">
                             Adresse E-mail
                         </label>
                         <div className="mt-1">
@@ -167,7 +134,7 @@ const SignUpPage = () => {
 
                     {/* Champ Mot de Passe */}
                     <div>
-                        <label htmlFor="password" className="block text-sm font-medium text-stone-700">
+                        <label htmlFor="password" className="block  text-left text-sm font-medium text-stone-700">
                             Mot de Passe
                         </label>
                         <div className="mt-1">
@@ -187,7 +154,7 @@ const SignUpPage = () => {
 
                     {/* Champ Confirmation Mot de Passe */}
                     <div>
-                        <label htmlFor="confirmPassword" className="block text-sm font-medium text-stone-700">
+                        <label htmlFor="confirmPassword" className="block  text-left text-sm font-medium text-stone-700">
                             Confirmer le Mot de Passe
                         </label>
                         <div className="mt-1">
@@ -228,7 +195,7 @@ const SignUpPage = () => {
                     <div>
                         <button
                             type="submit"
-                            className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-amber-700 hover:bg-amber-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 transition duration-150 ease-in-out"
+                            className="w-full flex justify-center py-3 px-4 border border-transparent cursor-pointer rounded-lg shadow-sm text-sm font-medium text-white  bg-[#6b4226] hover:bg-amber-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 transition duration-150 ease-in-out"
                         >
                             Créer mon Compte
                         </button>
@@ -238,7 +205,7 @@ const SignUpPage = () => {
                 {/* --- Lien de Connexion --- */}
                 <div className="text-center text-sm text-stone-600">
                     Vous avez déjà un compte ?
-                    <a href="#" className="font-medium text-amber-700 hover:text-amber-800 ml-1 transition duration-150 ease-in-out">
+                    <a href="/login" className="font-medium text-[#6b4226] hover:text-amber-800 ml-1 transition duration-150 ease-in-out">
                         Connectez-vous ici
                     </a>
                 </div>

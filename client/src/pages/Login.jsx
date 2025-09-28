@@ -24,7 +24,7 @@ const LoginPage = () => {
       <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
         
         {/* --- Titre --- */}
-        <h1 className="text-3xl font-bold text-center text-gray-800 mb-2">
+        <h1 className="text-3xl font-bold text-center text-[#6b4226] mb-2">
           Content de vous revoir !
         </h1>
         <p className="text-center text-gray-500 mb-8">
@@ -35,13 +35,13 @@ const LoginPage = () => {
           
           {/* --- Champ Email --- */}
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-semibold mb-2" htmlFor="email">
+            <label className="block text-gray-700 text-sm text-left font-semibold mb-2" htmlFor="email">
               Adresse Email
             </label>
             <input
               type="email"
               id="email"
-              className="w-full px-4 py-2 text-gray-700 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 text-gray-700 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus: #6b4226"
               placeholder="votre.email@exemple.com"
               required
             />
@@ -49,13 +49,13 @@ const LoginPage = () => {
 
           {/* --- Champ Mot de passe --- */}
           <div className="mb-6">
-            <label className="block text-gray-700 text-sm font-semibold mb-2" htmlFor="password">
+            <label className="block text-left text-gray-700 text-sm font-semibold mb-2" htmlFor="password">
               Mot de passe
             </label>
             <input
               type="password"
               id="password"
-              className="w-full px-4 py-2 text-gray-700 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 text-gray-700 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:#6b4226"
               placeholder="••••••••"
               required
             />
@@ -64,7 +64,7 @@ const LoginPage = () => {
           {/* --- Bouton de connexion --- */}
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-300"
+            className="w-full  bg-[#6b4226] text-white font-bold py-3 px-4 rounded-lg hover:bg-[#975e38] transition-colors duration-300 cursor-pointer"
           >
             Se connecter
           </button>
@@ -86,7 +86,7 @@ const LoginPage = () => {
         {/* --- Lien vers l'inscription --- */}
         <p className="text-center text-sm text-gray-600 mt-8">
           Vous n'avez pas de compte ?
-          <a href="/signup" className="ml-1 font-semibold text-blue-600 hover:underline">
+          <a href="/signup" className="ml-1 font-semibold  text-[#6b4226] hover:underline">
             Inscrivez-vous
           </a>
         </p>

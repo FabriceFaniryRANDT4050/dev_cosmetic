@@ -37,7 +37,7 @@ export default function Pagination() {
               className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 inset-ring inset-ring-gray-700 hover:bg-white/5 focus:z-20 focus:outline-offset-0"
             >
               <span className="sr-only">Previous</span>
-              <ChevronLeftIcon aria-hidden="true" className="size-5" />
+              {/* <ChevronLeftIcon aria-hidden="true" className="size-5" /> */}
             </a>
             {/* Current: "z-10 text-white focus-visible:outline-2 focus-visible:outline-offset-2 bg-indigo-500 focus-visible:outline-indigo-500", Default: "inset-ring focus:outline-offset-0 text-gray-200 inset-ring-gray-700 hover:bg-white/5" */}
             <a
@@ -85,7 +85,7 @@ export default function Pagination() {
               className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 inset-ring inset-ring-gray-700 hover:bg-white/5 focus:z-20 focus:outline-offset-0"
             >
               <span className="sr-only">Next</span>
-              <ChevronRightIcon aria-hidden="true" className="size-5" />
+              {/* <ChevronRightIcon aria-hidden="true" className="size-5" /> */}
             </a>
           </nav>
         </div>

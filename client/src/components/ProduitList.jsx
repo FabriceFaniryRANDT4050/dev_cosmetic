@@ -1,4 +1,4 @@
-export default function ProductGrid() {
+export default function ProductList() {
     const products = [
       {
         id: 1,
@@ -6,7 +6,7 @@ export default function ProductGrid() {
         category: "Cheveux",
         price: "12.000 Ar",
         status: "Disponible",
-        image: "public\vite.svg",
+        image: "public/vite.svg",
       },
       {
         id: 2,
@@ -14,7 +14,7 @@ export default function ProductGrid() {
         category: "Visage",
         price: "18.500 Ar",
         status: "Promo",
-        image: "public\vite.svg",
+        image: "public/vite.svg",
       },
       {
         id: 3,
@@ -22,7 +22,7 @@ export default function ProductGrid() {
         category: "Soins",
         price: "25.000 Ar",
         status: "Disponible",
-        image: "public\vite.svg",
+        image: "public/vite.svg",
       },
     ];
   

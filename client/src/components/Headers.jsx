@@ -18,18 +18,6 @@ export default function Header() {
           </Link>
         </div>
 
-        {/* Menu desktop */}
-        <nav className="hidden lg:flex space-x-8 text-sm font-semibold text-[#6b4226]">
-          <Link to="/" className="hover:text-[#8b5e3c] transition">ACCUEIL</Link>
-          <Link to="/catalogue" className="hover:text-[#8b5e3c] transition">CATALOGUE</Link>
-          <Link to="/produits" className="hover:text-[#8b5e3c] transition">PRODUITS</Link>
-          <Link to="/blog" className="hover:text-[#8b5e3c] transition">BLOG</Link>
-          <Link to="/faq" className="hover:text-[#8b5e3c] transition">FAQ</Link>
-          <Link to="/panier" className="hover:text-[#8b5e3c] transition">PANIER</Link>
-          <Link to="/a-propos" className="hover:text-[#8b5e3c] transition">A PROPOS</Link>
-          <Link to="/contact" className="hover:text-[#8b5e3c] transition">CONTACT</Link>
-        </nav>
-
         {/* Recherche + icônes */}
         <div className="flex items-center space-x-4">
           {/* Recherche */}
@@ -53,7 +41,7 @@ export default function Header() {
           </div>
 
           {/* Icônes */}
-          <Link to="/compte" className="text-[#6b4226] hover:text-[#8b5e3c] transition">
+          <Link to="/login" className="text-[#6b4226] hover:text-[#8b5e3c] transition">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5.121 17.804A9.97 9.97 0 0112 15c2.21 0 4.236.72 5.879 1.929M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
@@ -83,6 +71,19 @@ export default function Header() {
           </button>
         </div>
       </div>
+      <div className="h-16 hidden lg:flex justify-center border-t-1 border-b-1 border-amber-700  pt-5">
+        {/* Menu desktop */}
+        <nav className="hidden lg:flex space-x-8 text-sm font-semibold text-[#6b4226]">
+          <Link to="/" className="hover:text-[#8b5e3c] transition">ACCUEIL</Link>
+          <Link to="/catalogue" className="hover:text-[#8b5e3c] transition">CATALOGUE</Link>
+          <Link to="/produit" className="hover:text-[#8b5e3c] transition">PRODUITS</Link>
+          <Link to="/blog" className="hover:text-[#8b5e3c] transition">BLOG</Link>
+          <Link to="/faq" className="hover:text-[#8b5e3c] transition">FAQ</Link>
+          <Link to="/panier" className="hover:text-[#8b5e3c] transition">PANIER</Link>
+          <Link to="/a-propos" className="hover:text-[#8b5e3c] transition">A PROPOS</Link>
+          <Link to="/contact" className="hover:text-[#8b5e3c] transition">CONTACT</Link>
+        </nav>
+      </div>
 
       {/* Menu mobile */}
       {isOpen && (
@@ -90,7 +91,7 @@ export default function Header() {
           <nav className="flex flex-col space-y-2 p-4 text-[#6b4226] font-medium">
             <Link to="/" className="hover:text-[#8b5e3c]">ACCUEIL</Link>
             <Link to="/catalogue" className="hover:text-[#8b5e3c]">CATALOGUE</Link>
-            <Link to="/produits" className="hover:text-[#8b5e3c]">PRODUITS</Link>
+            <Link to="/produit" className="hover:text-[#8b5e3c]">PRODUITS</Link>
             <Link to="/blog" className="hover:text-[#8b5e3c]">BLOG</Link>
             <Link to="/faq" className="hover:text-[#8b5e3c]">FAQ</Link>
             <Link to="/panier" className="hover:text-[#8b5e3c]">PANIER</Link>

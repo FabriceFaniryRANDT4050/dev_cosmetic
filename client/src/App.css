@@ -1,11 +1,12 @@
-
-
 #root {
   max-width: 1280px;
   margin: 0 auto;
   text-align: center;
-  padding-top: 2rem;
   box-sizing: border-box;
+}
+
+body{
+  background-color: #fdf6ec;
 }
 
 .logo {

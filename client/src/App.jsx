@@ -12,7 +12,7 @@ import About from './pages/About';
 import Contact from './pages/Contact'; 
 import Blog from './pages/Blog'; 
 import Produit from './pages/Produit'; 
-import PanierComponent from './pages/Pannier'; 
+import PanierComponent from './pages/Panier'; 
 import Catalogue from './pages/Catalogue'; 
 import LoginPage from './pages/Login'; 
 import SignInPage from './pages/Signin'; 
@@ -20,6 +20,11 @@ import SignInPage from './pages/Signin';
 // 3. Importer les outils de routage
 import { Routes, Route } from "react-router-dom";
 import Error from './components/Error';
+import DetailProduit from './components/DetailProduit';
+import Faq from './components/Faq';
+import MvolaPaymentForm from './pages/Paiement';
+import PaiementList from './components/test';
+
 
 // Layout pour les pages normales
 function Layout({ children }) {
@@ -92,14 +97,33 @@ function App() {
           </Layout>
         }
       />
+      <Route
+        path="/details-produit"
+        element={
+          <Layout>
+            <DetailProduit />
+          </Layout>
+        }
+      />
+      <Route
+        path="/faq"
+        element={
+          <Layout>
+            <Faq />
+          </Layout>
+        }
+      />
 
       {/* Routes spéciales sans Layout */}
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/paiement" element={<MvolaPaymentForm />} />
       <Route path="/signup" element={<SignInPage />} />
       <Route path="/error" element={<Error />} />
+      <Route path="/error" element={<Error />} />
+      {/* <Route path="test" element={<PaiementList />} /> */}
 
       {/* Route fallback (URL inexistantes) */}
-      <Route path="*" element={<Error />} />
+      <Route path="*" element={<PaiementList />} />
     </Routes>
   );
 }

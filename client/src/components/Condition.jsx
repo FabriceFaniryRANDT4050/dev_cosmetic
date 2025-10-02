@@ -6,8 +6,8 @@ export default function ConditionsVente() {
       <h1 className="text-3xl font-bold text-brown-700 mb-6">
         Conditions Générales de Vente
       </h1>
-
-      <section className="mb-8">
+ 
+      <section className="mb-8 text-left">
         <h2 className="text-2xl font-semibold text-brown-600 mb-2">
           Produits cosmétiques naturels
         </h2>
@@ -19,7 +19,7 @@ export default function ConditionsVente() {
         </p>
       </section>
 
-      <section className="mb-8">
+      <section className="mb-8 text-left">
         <h2 className="text-2xl font-semibold text-brown-600 mb-2">
           Huiles essentielles
         </h2>
@@ -31,7 +31,7 @@ export default function ConditionsVente() {
         </p>
       </section>
 
-      <section className="mb-8">
+      <section className="mb-8 text-left">
         <h2 className="text-2xl font-semibold text-brown-600 mb-2">
           Produits capillaires
         </h2>
@@ -42,7 +42,7 @@ export default function ConditionsVente() {
         </p>
       </section>
 
-      <section className="mb-8">
+      <section className="mb-8 text-left">
         <h2 className="text-2xl font-semibold text-brown-600 mb-2">
           Accessoires & matériel DIY
         </h2>

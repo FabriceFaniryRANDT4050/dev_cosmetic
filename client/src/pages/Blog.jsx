@@ -44,7 +44,7 @@ const ScrollFadeIn = ({ children, direction = 'up', delay = 0, threshold = 0.1 }
     
     // Classes de transition et d'état
     const classes = `
-        transition-all duration-700 ease-out 
+        transition-all duration-100 ease-out 
         ${isVisible ? 'opacity-100 translate-x-0 translate-y-0' : `opacity-0 ${getInitialTranslate()}`}
     `;
 
@@ -60,7 +60,7 @@ const ScrollFadeIn = ({ children, direction = 'up', delay = 0, threshold = 0.1 }
 
 
 // ====================================================================
-// COMPOSANT PRINCIPAL BLOGPAGE
+// COMPOSANT PRINCIPAL BLOG
 // ====================================================================
 
 const BlogPage = () => {
@@ -144,7 +144,7 @@ const BlogPage = () => {
       </ScrollFadeIn>
 
       {/* Liste des produits (Animation de cascade) */}
-      <ScrollFadeIn direction='up' delay={100} threshold={0.1}>
+      <ScrollFadeIn direction='up' delay={0} threshold={0.1}>
         <h2 className={`font-bold text-left text-lg mb-4 ${primaryColor}`}>Plus récents</h2>
       </ScrollFadeIn>
 
@@ -192,7 +192,7 @@ const BlogPage = () => {
 
       {/* Section Astuces (Animation) */}
       <ScrollFadeIn direction='up' delay={200} threshold={0.1}>
-        <div className="mt-12 border-t border-[#d4bfa4] pt-8">
+        <div className="mt-12 border-t border-[#d4bfa4] pt-8 mb-10">
           <h2 className={`font-bold text-lg mb-4 ${primaryColor}`}>Astuces & Conseils</h2>
           <p className="text-base text-stone-600 leading-relaxed font-light">
             Véritable baume de soin, cette base masque capillaire neutre, certifiée
@@ -207,12 +207,12 @@ const BlogPage = () => {
         </div>
       </ScrollFadeIn>
 
-      {/* Pagination (Animation) */}
+      {/* Pagination (Animation)
       <ScrollFadeIn direction='up' delay={300} threshold={0.1}>
           <div className="mt-8">
              <Pagination/>
           </div>
-      </ScrollFadeIn>
+      </ScrollFadeIn> */}
     </div>
   );
 };

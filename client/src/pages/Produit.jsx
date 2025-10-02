@@ -1,7 +1,7 @@
 import Siderbar from "../components/Sidebar";
-import  Gallery  from "../components/Gallery";
+import  DetailProduit  from "../components/DetailProduit";
 export default function Produit(){
     return(
-        <div><Gallery/></div>
+        <div><DetailProduit/></div>
     )
 }

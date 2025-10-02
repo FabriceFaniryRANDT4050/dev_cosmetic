@@ -9,12 +9,13 @@ export default function Header() {
       <div className="container mx-auto px-4 lg:px-8 flex items-center justify-between h-20">
         {/* Logo */}
         <div className="flex-shrink-0">
-          <Link to="/">
+          <Link to="/" className="flex items-center">
             <img
               src="public\image\MonLogo.png"
               alt="Harena Cosmetique Beauté"
               className="h-12 w-auto"
             />
+            <div className="text-stone-900 font-bold text-3xl sm:text-2xl">Harena Cosmetique</div>
           </Link>
         </div>
 
@@ -79,7 +80,7 @@ export default function Header() {
           <Link to="/produit" className="hover:text-[#8b5e3c] transition">PRODUITS</Link>
           <Link to="/blog" className="hover:text-[#8b5e3c] transition">BLOG</Link>
           <Link to="/faq" className="hover:text-[#8b5e3c] transition">FAQ</Link>
-          <Link to="/panier" className="hover:text-[#8b5e3c] transition">PANIER</Link>
+          {/* <Link to="/panier" className="hover:text-[#8b5e3c] transition">PANIER</Link> */}
           <Link to="/a-propos" className="hover:text-[#8b5e3c] transition">A PROPOS</Link>
           <Link to="/contact" className="hover:text-[#8b5e3c] transition">CONTACT</Link>
         </nav>
@@ -88,13 +89,13 @@ export default function Header() {
       {/* Menu mobile */}
       {isOpen && (
         <div className="lg:hidden bg-[#fdf6ec] shadow-md border-t border-[#d4bfa4]">
-          <nav className="flex flex-col space-y-2 p-4 text-[#6b4226] font-medium">
+          <nav className="flex flex-col space-y-2 p-4 text-[#6b4226] font-medium text-left">
             <Link to="/" className="hover:text-[#8b5e3c]">ACCUEIL</Link>
             <Link to="/catalogue" className="hover:text-[#8b5e3c]">CATALOGUE</Link>
             <Link to="/produit" className="hover:text-[#8b5e3c]">PRODUITS</Link>
             <Link to="/blog" className="hover:text-[#8b5e3c]">BLOG</Link>
             <Link to="/faq" className="hover:text-[#8b5e3c]">FAQ</Link>
-            <Link to="/panier" className="hover:text-[#8b5e3c]">PANIER</Link>
+            {/* <Link to="/panier" className="hover:text-[#8b5e3c]">PANIER</Link> */}
             <Link to="/a-propos" className="hover:text-[#8b5e3c]">A PROPOS</Link>
             <Link to="/contact" className="hover:text-[#8b5e3c]">CONTACT</Link>
           </nav>

@@ -21,8 +21,8 @@ export default function Heros() {
         quasi. In deleniti eaque aut repudiandae et a id nisi.
       </p>
       <div className="flex justify-start items-center">
-        <button className="btn bg-[#6b4226] p-3 border-0">Decouvrir maintenant</button>
-        <a href="www.google.com" className=" ml-3 border-1 p-2 rounded-sm"> En savoir plus</a>
+        <a className="btn bg-[#6b4226] p-3 border-0" href="/catalogue">Decouvrir maintenant</a>
+        <a href="/blog" className=" ml-3 border-1 p-2 rounded-sm"> En savoir plus</a>
       </div>
     </div>
   </div>

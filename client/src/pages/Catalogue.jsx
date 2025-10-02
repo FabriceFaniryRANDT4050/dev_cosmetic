@@ -1,9 +1,9 @@
-import ProductList from "../components/ProduitList";
+import Gallery from "../components/Gallery";
 
 export default function Catalogue(){
     return(
         <div>
-            <ProductList/>
+            <Gallery/>
         </div>
     )
 }

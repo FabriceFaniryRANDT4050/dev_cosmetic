@@ -7,7 +7,7 @@ const products = [
   {
     id: 1,
     name: "Crème Hydratante Aloe Vera",
-    image: "https://images.unsplash.com/photo-1601004890684-d8cbf643f5f2?w=500",
+    image: "public/image/heros.jpg",
     discount: "Jusqu'à -20%",
     rating: 5.0,
     reviews: 320,
@@ -17,7 +17,7 @@ const products = [
   {
     id: 2,
     name: "Shampoing Naturel Argan",
-    image: "https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=500",
+    image: "public/image/heros.jpg",
     discount: "Promo -15%",
     rating: 4.8,
     reviews: 210,
@@ -27,7 +27,7 @@ const products = [
   {
     id: 3,
     name: "Savon Artisanal Bio",
-    image: "https://images.unsplash.com/photo-1617957741649-8c5ff1a8f5ca?w=500",
+    image: "public/image/heros.jpg",
     discount: "Lot spécial",
     rating: 4.7,
     reviews: 150,
@@ -37,7 +37,7 @@ const products = [
   {
     id: 4,
     name: "Huile de Massage Relaxante",
-    image: "https://images.unsplash.com/photo-1611926653458-09294f96f83b?w=500",
+    image: "public/image/heros.jpg",
     discount: "Jusqu'à -10%",
     rating: 4.9,
     reviews: 98,
@@ -92,7 +92,7 @@ function ProductCard({ product }) {
         {/* Prix + bouton */}
         <div className="mt-4 flex items-center justify-between gap-4">
           <p className="text-2xl font-extrabold text-[#5C4033]">
-            {product.price} €
+            {product.price}000 Ar
           </p>
           <button className="rounded-lg bg-[#5C4033] px-5 py-2 text-sm font-medium text-white hover:bg-[#7B4B3A]">
             Ajouter
@@ -129,12 +129,12 @@ export default function Gallery() {
   );
 
   return (
-    <section className="bg-gray-50 py-8">
-      <div className="mx-auto max-w-screen-xl px-4">
+    <section className="bg-gray-50 p-10 py-8 pt-20">
+      <div className="mx-auto max-w-screen-xl px-4 ">
         {/* Header */}
         <div className="mb-6 flex flex-col md:flex-row justify-between items-center gap-4">
           <h2 className="text-2xl font-bold text-[#5C4033]">
-            Produits Cosmétiques
+            Produits pour cheveux
           </h2>
 
           <div className="flex gap-3">
@@ -158,10 +158,33 @@ export default function Gallery() {
             />
           </div>
         </div>
+        <div className="text-left text-stone-800 mb-5 mt-5 pl-5">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo neque id nobis fugiat. Perspiciatis dignissimos eos officia atque hic, expedita quis? Nihil iusto ad placeat maiores odio architecto optio quidem?
+          Cupiditate fugit vitae voluptatem numquam magni, sunt quis t
+        </div>
+
 
         {/* Carrousel encadré */}
         <div className="rounded-lg border bg-white p-4 shadow-md">
-          <Slider {...settings}>
+          <Slider {...settings} className="m-5">
+            {filteredProducts.map((product) => (
+              <div key={product.id} className="px-2">
+                <ProductCard product={product} />
+              </div>
+            ))}
+          </Slider>
+        </div>
+
+          <h2 className="text-2xl text-left font-bold text-[#5C4033] mt-20 mb-5">
+            Produits pour visage
+          </h2>
+          <div className="text-left text-stone-800 mb-5 mt-5 pl-5">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo neque id nobis fugiat. Perspiciatis dignissimos eos officia atque hic, expedita quis? Nihil iusto ad placeat maiores odio architecto optio quidem?
+          Cupiditate fugit vitae voluptatem numquam magni, sunt quis t
+        </div>
+        {/* Carrousel encadré */}
+        <div className="rounded-lg border bg-white p-4 shadow-md">
+          <Slider {...settings} className="m-5">
             {filteredProducts.map((product) => (
               <div key={product.id} className="px-2">
                 <ProductCard product={product} />

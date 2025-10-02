@@ -121,7 +121,11 @@ function About() {
                         }}
                     >
                         <div className="flex items-center justify-center h-full text-stone-400 font-light text-sm">
-                            (Image de l'équipe ou des produits)
+                            <img
+                                src='public\image\beauty.jpg'
+                                // Ajustement de la taille de l'image
+                                className="w-full h-full  object-cover rounded-lg"
+                            />
                         </div>
                     </div>
                 </div>
@@ -139,8 +143,8 @@ function About() {
                     <p className="text-stone-600 leading-relaxed font-light">
                         Nous nous engageons pour une beauté **éthique et durable**. Chaque ingrédient est sélectionné avec soin pour ses propriétés bienfaisantes, garantissant une efficacité maximale sans compromis sur la naturalité. Nous privilégions les ingrédients issus du commerce équitable.
                     </p>
-                    <button className={`mt-6 px-6 py-2 border border-[#d4bfa4] text-sm font-medium ${primaryColor} hover:${accentColor} hover:text-white transition duration-200 rounded-full`}>
-                        En savoir plus
+                    <button className={`mt-6 px-6 py-2 border border-[#d4bfa4] text-sm font-medium ${primaryColor} hover:${accentColor} hover:text-stone-900 transition duration-200 rounded-full`}>
+                        <a href="/contact">En savoir plus</a>
                     </button>
                 </div>
             </ScrollFadeIn>
@@ -179,7 +183,7 @@ function About() {
         <ScrollFadeIn direction='up' delay={100}>
             <div className="text-center pt-10 border-t border-stone-300/50">
                 <p className="text-base text-stone-500 font-light">
-                    **Harèna Cosmétique Beauté**. Le soin, c'est le partage.
+                    Le soin, c'est le partage.
                 </p>
             </div>
         </ScrollFadeIn>

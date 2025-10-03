@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import axios from "axios";
+import api from "../API/url";
 
 // Remplacement des imports externes par des icônes SVG intégrées pour garantir la compilation
 // FaGoogle et FaFacebookF sont recréés en tant que composants inline.
@@ -21,10 +23,11 @@ const FacebookIcon = (props) => (
 const SignUpPage = () => {
     // État pour gérer les données du formulaire
     const [formData, setFormData] = useState({
-        name: '',
-        email: '',
-        password: '',
-        confirmPassword: '',
+        nom_client: '',
+        prenom_client: '',
+        email_client: '',
+        phone_client: '',
+        adresse_client: '',
     });
 
     // État pour gérer les messages d'erreur de validation
@@ -34,21 +37,21 @@ const SignUpPage = () => {
     const validate = () => {
         const newErrors = {};
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        // Le mot de passe doit contenir au moins 8 caractères, une majuscule et un chiffre.
-        const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+        const phoneRegex = /^[0-9]{10}$/;
 
-        if (!formData.name) newErrors.name = 'Le nom complet est requis.';
+        if (!formData.nom_client) newErrors.nom_client = 'Le nom est requis.';
+        if (!formData.prenom_client) newErrors.prenom_client = 'Le prénom est requis.';
         
-        if (!formData.email || !emailRegex.test(formData.email)) {
-            newErrors.email = 'Veuillez entrer une adresse e-mail valide.';
+        if (!formData.email_client || !emailRegex.test(formData.email_client)) {
+            newErrors.email_client = 'Veuillez entrer une adresse e-mail valide.';
         }
 
-        if (!formData.password || !passwordRegex.test(formData.password)) {
-            newErrors.password = 'Le mot de passe doit contenir au moins 8 caractères, dont une majuscule et un chiffre.';
+        if (!formData.phone_client || !phoneRegex.test(formData.phone_client)) {
+            newErrors.phone_client = 'Veuillez entrer un numéro de téléphone valide (10 chiffres).';
         }
 
-        if (formData.password !== formData.confirmPassword) {
-            newErrors.confirmPassword = 'Les mots de passe ne correspondent pas.';
+        if (!formData.adresse_client) {
+            newErrors.adresse_client = 'L\'adresse est requise.';
         }
 
         setErrors(newErrors);
@@ -65,16 +68,40 @@ const SignUpPage = () => {
     };
 
     // Gestion de la soumission du formulaire
-    const handleSignUp = (e) => {
+    const handleSignUp = async (e) => {
         e.preventDefault();
         
-        if (validate()) {
-            console.log('Soumission du formulaire d\'inscription réussie :', formData);
-            // ENVOI AU BACKEND ICI
-        } else {
-            console.log('Erreurs de validation, soumission bloquée.');
+        if (!validate()) {
+            return;
         }
-    };
+
+        try {
+            const response = await axios.post('https://127.0.0.1:8000/api/register', formData);
+            console.log('Compte créé avec succès:', response.data);
+            // Rediriger vers la page de connexion ou afficher un message de succès
+            alert('Votre compte a été créé avec succès!');
+            // Redirection vers la page de connexion
+            window.location.href = '/login';
+        } catch (error) {
+            console.error('Erreur lors de la création du compte:', error);
+            if (error.response) {
+                // Afficher les erreurs du serveur
+                setErrors({
+                    ...errors,
+                    server: error.response.data.error || 'Une erreur est survenue lors de la création du compte.'
+                });
+            } else {
+                setErrors({
+                    ...errors,
+                    server: 'Erreur de connexion au serveur.'
+                });
+            }
+        }
+
+}
+
+
+
 
     // Logique pour la connexion sociale - Rendre le design plus efficace
     const handleSocialLogin = (provider) => {
@@ -89,88 +116,115 @@ const SignUpPage = () => {
                     Créez votre compte
                 </h2>
 
-                {/* --- Formulaire d'Inscription Traditionnel --- */}
+                {/* --- Formulaire d'Inscription --- */}
                 <form className="space-y-6" onSubmit={handleSignUp}>
                     
-                    {/* Champ Nom Complet */}
+                    {/* Champ Nom */}
                     <div>
-                        <label htmlFor="name" className="block text-left text-sm font-medium text-stone-700">
-                            Nom Complet
+                        <label htmlFor="nom_client" className="block text-left text-sm font-medium text-stone-700">
+                            Nom
                         </label>
                         <div className="mt-1">
                             <input
-                                id="name"
-                                name="name"
+                                id="nom_client"
+                                name="nom_client"
                                 type="text"
                                 required
-                                value={formData.name}
+                                value={formData.nom_client}
                                 onChange={handleChange}
-                                className={`appearance-none block w-full px-4 py-2 border ${errors.name ? 'border-red-500' : 'border-stone-300'} rounded-md shadow-sm placeholder-stone-400 focus:outline-none focus:ring-amber-500 focus:border-amber-500 sm:text-sm`}
-                                placeholder="John Doe"
+                                className={`appearance-none block w-full px-4 py-2 border ${errors.nom_client ? 'border-red-500' : 'border-stone-300'} rounded-md shadow-sm placeholder-stone-400 focus:outline-none focus:ring-amber-500 focus:border-amber-500 sm:text-sm`}
+                                placeholder="Votre nom"
                             />
                         </div>
-                        {errors.name && <p className="mt-1 text-xs text-red-500">{errors.name}</p>}
+                        {errors.nom_client && <p className="mt-1 text-xs text-red-500">{errors.nom_client}</p>}
                     </div>
 
-                    {/* Champ Adresse E-mail */}
+                    {/* Champ Prénom */}
                     <div>
-                        <label htmlFor="email" className="block text-left text-sm font-medium text-stone-700">
+                        <label htmlFor="prenom_client" className="block text-left text-sm font-medium text-stone-700">
+                            Prénom
+                        </label>
+                        <div className="mt-1">
+                            <input
+                                id="prenom_client"
+                                name="prenom_client"
+                                type="text"
+                                required
+                                value={formData.prenom_client}
+                                onChange={handleChange}
+                                className={`appearance-none block w-full px-4 py-2 border ${errors.prenom_client ? 'border-red-500' : 'border-stone-300'} rounded-md shadow-sm placeholder-stone-400 focus:outline-none focus:ring-amber-500 focus:border-amber-500 sm:text-sm`}
+                                placeholder="Votre prénom"
+                            />
+                        </div>
+                        {errors.prenom_client && <p className="mt-1 text-xs text-red-500">{errors.prenom_client}</p>}
+                    </div>
+
+                    {/* Champ Email */}
+                    <div>
+                        <label htmlFor="email_client" className="block text-left text-sm font-medium text-stone-700">
                             Adresse E-mail
                         </label>
                         <div className="mt-1">
                             <input
-                                id="email"
-                                name="email"
+                                id="email_client"
+                                name="email_client"
                                 type="email"
                                 required
-                                value={formData.email}
+                                value={formData.email_client}
                                 onChange={handleChange}
-                                className={`appearance-none block w-full px-4 py-2 border ${errors.email ? 'border-red-500' : 'border-stone-300'} rounded-md shadow-sm placeholder-stone-400 focus:outline-none focus:ring-amber-500 focus:border-amber-500 sm:text-sm`}
+                                className={`appearance-none block w-full px-4 py-2 border ${errors.email_client ? 'border-red-500' : 'border-stone-300'} rounded-md shadow-sm placeholder-stone-400 focus:outline-none focus:ring-amber-500 focus:border-amber-500 sm:text-sm`}
                                 placeholder="votre@email.com"
                             />
                         </div>
-                        {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email}</p>}
+                        {errors.email_client && <p className="mt-1 text-xs text-red-500">{errors.email_client}</p>}
                     </div>
 
-                    {/* Champ Mot de Passe */}
+                    {/* Champ Téléphone */}
                     <div>
-                        <label htmlFor="password" className="block  text-left text-sm font-medium text-stone-700">
-                            Mot de Passe
+                        <label htmlFor="phone_client" className="block text-left text-sm font-medium text-stone-700">
+                            Téléphone
                         </label>
                         <div className="mt-1">
                             <input
-                                id="password"
-                                name="password"
-                                type="password"
+                                id="phone_client"
+                                name="phone_client"
+                                type="tel"
                                 required
-                                value={formData.password}
+                                value={formData.phone_client}
                                 onChange={handleChange}
-                                className={`appearance-none block w-full px-4 py-2 border ${errors.password ? 'border-red-500' : 'border-stone-300'} rounded-md shadow-sm placeholder-stone-400 focus:outline-none focus:ring-amber-500 focus:border-amber-500 sm:text-sm`}
-                                placeholder="Minimum 8 caractères, Majuscule, Chiffre"
+                                className={`appearance-none block w-full px-4 py-2 border ${errors.phone_client ? 'border-red-500' : 'border-stone-300'} rounded-md shadow-sm placeholder-stone-400 focus:outline-none focus:ring-amber-500 focus:border-amber-500 sm:text-sm`}
+                                placeholder="Votre numéro de téléphone"
                             />
                         </div>
-                        {errors.password && <p className="mt-1 text-xs text-red-500">{errors.password}</p>}
+                        {errors.phone_client && <p className="mt-1 text-xs text-red-500">{errors.phone_client}</p>}
                     </div>
 
-                    {/* Champ Confirmation Mot de Passe */}
+                    {/* Champ Adresse */}
                     <div>
-                        <label htmlFor="confirmPassword" className="block  text-left text-sm font-medium text-stone-700">
-                            Confirmer le Mot de Passe
+                        <label htmlFor="adresse_client" className="block text-left text-sm font-medium text-stone-700">
+                            Adresse
                         </label>
                         <div className="mt-1">
-                            <input
-                                id="confirmPassword"
-                                name="confirmPassword"
-                                type="password"
+                            <textarea
+                                id="adresse_client"
+                                name="adresse_client"
                                 required
-                                value={formData.confirmPassword}
+                                value={formData.adresse_client}
                                 onChange={handleChange}
-                                className={`appearance-none block w-full px-4 py-2 border ${errors.confirmPassword ? 'border-red-500' : 'border-stone-300'} rounded-md shadow-sm placeholder-stone-400 focus:outline-none focus:ring-amber-500 focus:border-amber-500 sm:text-sm`}
-                                placeholder="Retapez le mot de passe"
+                                rows="3"
+                                className={`appearance-none block w-full px-4 py-2 border ${errors.adresse_client ? 'border-red-500' : 'border-stone-300'} rounded-md shadow-sm placeholder-stone-400 focus:outline-none focus:ring-amber-500 focus:border-amber-500 sm:text-sm`}
+                                placeholder="Votre adresse complète"
                             />
                         </div>
-                        {errors.confirmPassword && <p className="mt-1 text-xs text-red-500">{errors.confirmPassword}</p>}
+                        {errors.adresse_client && <p className="mt-1 text-xs text-red-500">{errors.adresse_client}</p>}
                     </div>
+
+                    {/* Affichage des erreurs serveur */}
+                    {errors.server && (
+                        <div className="text-red-500 text-sm text-center">
+                            {errors.server}
+                        </div>
+                    )}
                     
                     {/* Checkbox pour les conditions générales */}
                     <div className="flex items-start">

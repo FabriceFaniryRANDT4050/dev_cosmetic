@@ -24,6 +24,7 @@ import DetailProduit from './components/DetailProduit';
 import Faq from './components/Faq';
 import MvolaPaymentForm from './pages/Paiement';
 import PaiementList from './components/test';
+import Auth from './API/auth/LoginAuth';
 
 
 // Layout pour les pages normales
@@ -119,7 +120,7 @@ function App() {
       <Route path="/paiement" element={<MvolaPaymentForm />} />
       <Route path="/signup" element={<SignInPage />} />
       <Route path="/error" element={<Error />} />
-      <Route path="/error" element={<Error />} />
+      <Route path="/Auth" element={<Auth />} />
       {/* <Route path="test" element={<PaiementList />} /> */}
 
       {/* Route fallback (URL inexistantes) */}

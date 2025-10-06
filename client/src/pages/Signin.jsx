@@ -28,6 +28,8 @@ const SignUpPage = () => {
         email_client: '',
         phone_client: '',
         adresse_client: '',
+        password_client: '',
+        confirm_password: '',
     });
 
     // État pour gérer les messages d'erreur de validation
@@ -52,6 +54,20 @@ const SignUpPage = () => {
 
         if (!formData.adresse_client) {
             newErrors.adresse_client = 'L\'adresse est requise.';
+        }
+
+        // Validation du mot de passe
+        const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+        if (!formData.password_client) {
+            newErrors.password_client = 'Le mot de passe est requis.';
+        } else if (!passwordRegex.test(formData.password_client)) {
+            newErrors.password_client = 'Le mot de passe doit contenir au moins 8 caractères, une lettre et un chiffre.';
+        }
+
+        if (!formData.confirm_password) {
+            newErrors.confirm_password = 'Veuillez confirmer votre mot de passe.';
+        } else if (formData.password_client !== formData.confirm_password) {
+            newErrors.confirm_password = 'Les mots de passe ne correspondent pas.';
         }
 
         setErrors(newErrors);
@@ -132,7 +148,7 @@ const SignUpPage = () => {
                                 required
                                 value={formData.nom_client}
                                 onChange={handleChange}
-                                className={`appearance-none block w-full px-4 py-2 border ${errors.nom_client ? 'border-red-500' : 'border-stone-300'} rounded-md shadow-sm placeholder-stone-400 focus:outline-none focus:ring-amber-500 focus:border-amber-500 sm:text-sm`}
+                                className={`appearance-none block w-full px-4 py-2 border ${errors.nom_client ? 'border-red-500' : 'border-stone-300'} rounded-md shadow-sm placeholder-stone-400 focus:outline-none focus:ring-amber-500 focus:border-amber-500 sm:text-sm text-stone-900`}
                                 placeholder="Votre nom"
                             />
                         </div>
@@ -152,7 +168,7 @@ const SignUpPage = () => {
                                 required
                                 value={formData.prenom_client}
                                 onChange={handleChange}
-                                className={`appearance-none block w-full px-4 py-2 border ${errors.prenom_client ? 'border-red-500' : 'border-stone-300'} rounded-md shadow-sm placeholder-stone-400 focus:outline-none focus:ring-amber-500 focus:border-amber-500 sm:text-sm`}
+                                className={`appearance-none block w-full px-4 py-2 border ${errors.prenom_client ? 'border-red-500' : 'border-stone-300'} rounded-md shadow-sm placeholder-stone-400 focus:outline-none focus:ring-amber-500 focus:border-amber-500 sm:text-sm text-stone-900`}
                                 placeholder="Votre prénom"
                             />
                         </div>
@@ -172,7 +188,7 @@ const SignUpPage = () => {
                                 required
                                 value={formData.email_client}
                                 onChange={handleChange}
-                                className={`appearance-none block w-full px-4 py-2 border ${errors.email_client ? 'border-red-500' : 'border-stone-300'} rounded-md shadow-sm placeholder-stone-400 focus:outline-none focus:ring-amber-500 focus:border-amber-500 sm:text-sm`}
+                                className={`appearance-none block w-full px-4 py-2 border ${errors.email_client ? 'border-red-500' : 'border-stone-300'} rounded-md shadow-sm placeholder-stone-400 focus:outline-none focus:ring-amber-500 focus:border-amber-500 sm:text-sm text-stone-900`}
                                 placeholder="votre@email.com"
                             />
                         </div>
@@ -192,7 +208,7 @@ const SignUpPage = () => {
                                 required
                                 value={formData.phone_client}
                                 onChange={handleChange}
-                                className={`appearance-none block w-full px-4 py-2 border ${errors.phone_client ? 'border-red-500' : 'border-stone-300'} rounded-md shadow-sm placeholder-stone-400 focus:outline-none focus:ring-amber-500 focus:border-amber-500 sm:text-sm`}
+                                className={`appearance-none block w-full px-4 py-2 border ${errors.phone_client ? 'border-red-500' : 'border-stone-300'} rounded-md shadow-sm placeholder-stone-400 focus:outline-none focus:ring-amber-500 focus:border-amber-500 sm:text-sm text-stone-900`}
                                 placeholder="Votre numéro de téléphone"
                             />
                         </div>
@@ -200,7 +216,7 @@ const SignUpPage = () => {
                     </div>
 
                     {/* Champ Adresse */}
-                    <div>
+                    {/* <div>
                         <label htmlFor="adresse_client" className="block text-left text-sm font-medium text-stone-700">
                             Adresse
                         </label>
@@ -217,6 +233,46 @@ const SignUpPage = () => {
                             />
                         </div>
                         {errors.adresse_client && <p className="mt-1 text-xs text-red-500">{errors.adresse_client}</p>}
+                    </div> */}
+
+                    {/* Champ Mot de passe */}
+                    <div>
+                        <label htmlFor="password_client" className="block text-left text-sm font-medium text-stone-700">
+                            Mot de passe
+                        </label>
+                        <div className="mt-1">
+                            <input
+                                id="password_client"
+                                name="password_client"
+                                type="password"
+                                required
+                                value={formData.password_client}
+                                onChange={handleChange}
+                                className={`appearance-none block w-full px-4 py-2 border ${errors.password_client ? 'border-red-500' : 'border-stone-300'} rounded-md shadow-sm placeholder-stone-400 focus:outline-none focus:ring-amber-500 focus:border-amber-500 sm:text-sm text-stone-900`}
+                                placeholder="Au moins 8 caractères, une lettre et un chiffre"
+                            />
+                        </div>
+                        {errors.password_client && <p className="mt-1 text-xs text-red-500">{errors.password_client}</p>}
+                    </div>
+
+                    {/* Champ Confirmation du mot de passe */}
+                    <div>
+                        <label htmlFor="confirm_password" className="block text-left text-sm font-medium text-stone-700">
+                            Confirmer le mot de passe
+                        </label>
+                        <div className="mt-1">
+                            <input
+                                id="confirm_password"
+                                name="confirm_password"
+                                type="password"
+                                required
+                                value={formData.confirm_password}
+                                onChange={handleChange}
+                                className={`appearance-none block w-full px-4 py-2 border ${errors.confirm_password ? 'border-red-500' : 'border-stone-300'} rounded-md shadow-sm placeholder-stone-400 focus:outline-none focus:ring-amber-500 focus:border-amber-500 sm:text-sm text-stone-900`}
+                                placeholder="Retapez votre mot de passe"
+                            />
+                        </div>
+                        {errors.confirm_password && <p className="mt-1 text-xs text-red-500">{errors.confirm_password}</p>}
                     </div>
 
                     {/* Affichage des erreurs serveur */}
@@ -234,7 +290,7 @@ const SignUpPage = () => {
                                 name="terms"
                                 type="checkbox"
                                 required
-                                className="focus:ring-amber-500 h-4 w-4 text-amber-700 border-stone-300 rounded"
+                                className="focus:ring-amber-500 h-4 w-4 text-amber-700 border-stone-300 rounded "
                             />
                         </div>
                         <div className="ml-3 text-sm">

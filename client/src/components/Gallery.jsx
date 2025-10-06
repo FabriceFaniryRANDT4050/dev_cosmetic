@@ -1,53 +1,33 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Slider from "react-slick";
-import { Heart, Eye } from "lucide-react"; // icônes
+import { Heart, Eye, Search } from "lucide-react";
+import api from "../API/url";
+import { toast } from "react-toastify";
 
-// Produits cosmétiques
-const products = [
-  {
-    id: 1,
-    name: "Crème Hydratante Aloe Vera",
-    image: "public/image/heros.jpg",
-    discount: "Jusqu'à -20%",
-    rating: 5.0,
-    reviews: 320,
-    price: 25,
-    category: "soin",
-  },
-  {
-    id: 2,
-    name: "Shampoing Naturel Argan",
-    image: "public/image/heros.jpg",
-    discount: "Promo -15%",
-    rating: 4.8,
-    reviews: 210,
-    price: 18,
-    category: "cheveux",
-  },
-  {
-    id: 3,
-    name: "Savon Artisanal Bio",
-    image: "public/image/heros.jpg",
-    discount: "Lot spécial",
-    rating: 4.7,
-    reviews: 150,
-    price: 6,
-    category: "savon",
-  },
-  {
-    id: 4,
-    name: "Huile de Massage Relaxante",
-    image: "public/image/heros.jpg",
-    discount: "Jusqu'à -10%",
-    rating: 4.9,
-    reviews: 98,
-    price: 30,
-    category: "soin",
-  },
+// Categories disponibles
+const categories = [
+  { id: "all", name: "Tous les produits" },
+  { id: "Visage", name: "Soins du visage" },
+  { id: "Cheveux", name: "Soins des cheveux" },
+  { id: "Corps", name: "Soins du corps" },
+  { id: "Parfum", name: "Parfums" }
+];
+
+// Tri disponible
+const sortOptions = [
+  { id: "price-asc", name: "Prix croissant" },
+  { id: "price-desc", name: "Prix décroissant" },
+  { id: "name-asc", name: "Nom A-Z" },
+  { id: "name-desc", name: "Nom Z-A" }
 ];
 
 // Carte produit
 function ProductCard({ product }) {
+  const handleAddToCart = () => {
+    // TODO: Implémenter l'ajout au panier
+    toast.success("Produit ajouté au panier");
+  };
+
   return (
     <div className="relative rounded-lg border border-gray-200 bg-white p-6 shadow-sm h-[420px] flex flex-col justify-between hover:shadow-lg transition">
       {/* Icônes favoris et voir */}
@@ -65,36 +45,32 @@ function ProductCard({ product }) {
         <img
           className="h-full object-contain rounded-2xl"
           src={product.image}
-          alt={product.name}
+          alt={product.nom}
         />
       </div>
 
       {/* Infos */}
       <div className="pt-4 flex flex-col flex-1 justify-between">
         <span className="me-2 rounded bg-orange-100 px-2.5 py-0.5 text-xs font-medium text-[#5C4033]">
-          {product.discount}
+          {product.type}
         </span>
 
-        {/* Nom en chocolat */}
         <h3 className="mt-2 text-lg font-semibold text-[#5C4033] hover:underline line-clamp-2">
-          {product.name}
+          {product.nom}
         </h3>
 
-        {/* Rating */}
-        <div className="mt-2 flex items-center gap-2">
-          <div className="flex text-yellow-400">
-            {"★".repeat(Math.round(product.rating))}
-          </div>
-          <p className="text-sm font-medium text-orange-700">{product.rating}</p>
-          <p className="text-sm text-gray-500">({product.reviews} avis)</p>
+        <div className="mt-2 text-sm text-gray-600 line-clamp-2">
+          {product.definition}
         </div>
 
-        {/* Prix + bouton */}
         <div className="mt-4 flex items-center justify-between gap-4">
           <p className="text-2xl font-extrabold text-[#5C4033]">
-            {product.price}000 Ar
+            {product.prix} Ar
           </p>
-          <button className="rounded-lg bg-[#5C4033] px-5 py-2 text-sm font-medium text-white hover:bg-[#7B4B3A]">
+          <button 
+            onClick={handleAddToCart}
+            className="rounded-lg bg-[#5C4033] px-5 py-2 text-sm font-medium text-white hover:bg-[#7B4B3A]"
+          >
             Ajouter
           </button>
         </div>
@@ -103,10 +79,71 @@ function ProductCard({ product }) {
   );
 }
 
-// Carrousel
+// Composant principal Gallery
 export default function Gallery() {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
   const [search, setSearch] = useState("");
-  const [filter, setFilter] = useState("all");
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [sortBy, setSortBy] = useState("name-asc");
+  
+  // Charger les produits
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await api.get("/api/produits");
+        setProducts(response.data);
+        setLoading(false);
+      } catch (err) {
+        setError("Erreur lors du chargement des produits");
+        setLoading(false);
+        toast.error("Impossible de charger les produits");
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  // Filtrer et trier les produits
+  const getFilteredAndSortedProducts = () => {
+    let filtered = [...products];
+
+    // Filtrage par catégorie
+    if (selectedCategory !== "all") {
+      filtered = filtered.filter(p => p.type === selectedCategory);
+    }
+
+    // Filtrage par recherche
+    if (search) {
+      const searchLower = search.toLowerCase();
+      filtered = filtered.filter(p => 
+        p.nom.toLowerCase().includes(searchLower) ||
+        p.definition.toLowerCase().includes(searchLower)
+      );
+    }
+
+    // Tri
+    filtered.sort((a, b) => {
+      switch (sortBy) {
+        case "price-asc":
+          return a.prix - b.prix;
+        case "price-desc":
+          return b.prix - a.prix;
+        case "name-asc":
+          return a.nom.localeCompare(b.nom);
+        case "name-desc":
+          return b.nom.localeCompare(a.nom);
+        default:
+          return 0;
+      }
+    });
+
+    return filtered;
+  };
+
+  const filteredProducts = getFilteredAndSortedProducts();
 
   // Paramètres carrousel
   const settings = {
@@ -121,77 +158,96 @@ export default function Gallery() {
     ],
   };
 
-  // Filtrage
-  const filteredProducts = products.filter(
-    (p) =>
-      (filter === "all" || p.category === filter) &&
-      p.name.toLowerCase().includes(search.toLowerCase())
-  );
+  if (loading) {
+    return <div className="flex justify-center items-center h-96">
+      <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-[#5C4033]"></div>
+    </div>;
+  }
+
+  if (error) {
+    return <div className="text-red-600 text-center p-4">{error}</div>;
+  }
 
   return (
     <section className="bg-gray-50 p-10 py-8 pt-20">
-      <div className="mx-auto max-w-screen-xl px-4 ">
-        {/* Header */}
-        <div className="mb-6 flex flex-col md:flex-row justify-between items-center gap-4">
-          <h2 className="text-2xl font-bold text-[#5C4033]">
-            Produits pour cheveux
+      <div className="mx-auto max-w-screen-xl px-4">
+        {/* Filtres et recherche */}
+        <div className="mb-8 space-y-4">
+          <h2 className="text-3xl font-bold text-[#5C4033]">
+            Nos Produits
           </h2>
+          
+          <div className="flex flex-wrap gap-4">
+            <div className="flex-1 min-w-[200px]">
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Rechercher un produit..."
+                  className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#5C4033] focus:border-transparent"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+                <Search className="absolute left-3 top-2.5 text-gray-400" size={20} />
+              </div>
+            </div>
 
-          <div className="flex gap-3">
             <select
-              className="border rounded px-2 py-1 text-[#5C4033]"
-              value={filter}
-              onChange={(e) => setFilter(e.target.value)}
+              className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#5C4033]"
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
             >
-              <option value="all">Tous</option>
-              <option value="soin">Soins</option>
-              <option value="cheveux">Cheveux</option>
-              <option value="savon">Savons</option>
+              {categories.map(cat => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.name}
+                </option>
+              ))}
             </select>
 
-            <input
-              type="text"
-              placeholder="Rechercher un produit..."
-              className="border rounded px-3 py-1 w-64 text-[#5C4033]"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
+            <select
+              className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#5C4033]"
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+            >
+              {sortOptions.map(opt => (
+                <option key={opt.id} value={opt.id}>
+                  {opt.name}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
-        <div className="text-left text-stone-800 mb-5 mt-5 pl-5">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo neque id nobis fugiat. Perspiciatis dignissimos eos officia atque hic, expedita quis? Nihil iusto ad placeat maiores odio architecto optio quidem?
-          Cupiditate fugit vitae voluptatem numquam magni, sunt quis t
-        </div>
 
+        {/* Affichage des résultats */}
+        {filteredProducts.length === 0 ? (
+          <div className="text-center py-8 text-gray-500">
+            Aucun produit ne correspond à votre recherche
+          </div>
+        ) : (
+          <div className="grid gap-6">
+            {/* Grouper par catégorie */}
+            {categories.slice(1).map(category => {
+              const categoryProducts = filteredProducts.filter(p => p.type === category.id);
+              if (categoryProducts.length === 0) return null;
 
-        {/* Carrousel encadré */}
-        <div className="rounded-lg border bg-white p-4 shadow-md">
-          <Slider {...settings} className="m-5">
-            {filteredProducts.map((product) => (
-              <div key={product.id} className="px-2">
-                <ProductCard product={product} />
-              </div>
-            ))}
-          </Slider>
-        </div>
-
-          <h2 className="text-2xl text-left font-bold text-[#5C4033] mt-20 mb-5">
-            Produits pour visage
-          </h2>
-          <div className="text-left text-stone-800 mb-5 mt-5 pl-5">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo neque id nobis fugiat. Perspiciatis dignissimos eos officia atque hic, expedita quis? Nihil iusto ad placeat maiores odio architecto optio quidem?
-          Cupiditate fugit vitae voluptatem numquam magni, sunt quis t
-        </div>
-        {/* Carrousel encadré */}
-        <div className="rounded-lg border bg-white p-4 shadow-md">
-          <Slider {...settings} className="m-5">
-            {filteredProducts.map((product) => (
-              <div key={product.id} className="px-2">
-                <ProductCard product={product} />
-              </div>
-            ))}
-          </Slider>
-        </div>
+              return (
+                <div key={category.id} className="space-y-4">
+                  <h3 className="text-2xl font-bold text-[#5C4033] mt-8">
+                    {category.name}
+                  </h3>
+                  <div className="rounded-lg border bg-white p-4 shadow-md">
+                    <Slider {...settings} className="m-5">
+                      {categoryProducts.map((product) => (
+                        <div key={product.id} className="px-2">
+                          <ProductCard product={product} />
+                        </div>
+                      ))}
+                    </Slider>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </section>
   );

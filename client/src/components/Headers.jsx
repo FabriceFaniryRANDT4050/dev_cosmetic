@@ -1,8 +1,11 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from '../contexts/AuthContext';
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
+  const { isAuthenticated, user, logout } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <header className="w-full bg-[#fdf6ec] shadow-md sticky top-0 z-50">
@@ -42,24 +45,42 @@ export default function Header() {
           </div>
 
           {/* Icônes */}
-          <Link to="/login" className="text-[#6b4226] hover:text-[#8b5e3c] transition">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5.121 17.804A9.97 9.97 0 0112 15c2.21 0 4.236.72 5.879 1.929M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-          </Link>
+          <div className="relative group">
+            {isAuthenticated ? (
+              <button 
+                className="text-[#6b4226] hover:text-[#8b5e3c] transition flex items-center"
+                onClick={() => logout()}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5.121 17.804A9.97 9.97 0 0112 15c2.21 0 4.236.72 5.879 1.929M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <span className="ml-2 text-sm hidden md:inline">{user?.prenom}</span>
+              </button>
+            ) : (
+              <Link to="/login" className="text-[#6b4226] hover:text-[#8b5e3c] transition">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5.121 17.804A9.97 9.97 0 0112 15c2.21 0 4.236.72 5.879 1.929M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </Link>
+            )}
+          </div>
 
-          <Link to="/panier" className="text-[#6b4226] hover:text-[#8b5e3c] transition relative">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1.293 2.293A1 1 0 007 17h12m-9 4a1 1 0 100-2 1 1 0 000 2zm8 0a1 1 0 100-2 1 1 0 000 2z" />
-            </svg>
-            <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
-          </Link>
+          <div onClick={() => !isAuthenticated && navigate('/login')} className="relative">
+            <button className="text-[#6b4226] hover:text-[#8b5e3c] transition relative">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1.293 2.293A1 1 0 007 17h12m-9 4a1 1 0 100-2 1 1 0 000 2zm8 0a1 1 0 100-2 1 1 0 000 2z" />
+              </svg>
+              <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
+            </button>
+          </div>
 
-          <Link to="/favoris" className="text-[#6b4226] hover:text-[#8b5e3c] transition">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-            </svg>
-          </Link>
+          <div onClick={() => !isAuthenticated && navigate('/login')} className="relative">
+            <button className="text-[#6b4226] hover:text-[#8b5e3c] transition">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+            </button>
+          </div>
 
           {/* Burger menu mobile */}
           <button

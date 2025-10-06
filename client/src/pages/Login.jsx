@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 // Icône Google (inchangée)
 const GoogleIcon = () => (
@@ -13,44 +15,33 @@ const GoogleIcon = () => (
 const API_ENDPOINT = 'https://127.0.0.1:8000/api/login';
 
 const LoginPage = () => {
-    // États pour les champs du formulaire
+    const navigate = useNavigate();
+    const { isAuthenticated, login } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    
-    // États pour le feedback utilisateur après l'authentification
     const [statusMessage, setStatusMessage] = useState('');
     const [isError, setIsError] = useState(false);
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            navigate('/');
+        }
+    }, [isAuthenticated, navigate]);
 
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setStatusMessage(''); // Réinitialiser le message au début de la soumission
+        setStatusMessage('');
+        setIsError(false);
 
         try {
-            const response = await fetch(API_ENDPOINT, {
-                method: 'POST',
-                headers: { 
-                    // 🚨 ESSENTIEL : Indiquer que le corps est au format JSON
-                    'Content-Type': 'application/json' 
-                },
-                // 🚨 CORRECTION : Convertir l'objet JS en chaîne JSON
-                body: JSON.stringify({
-                    email: email,
-                    password: password
-                }),
-            });
-
-            const data = await response.json();
+            const result = await login(email, password);
             
-            // Le contrôleur Symfony renvoie un statut 200 en cas de succès et 400/401 en cas d'échec
-            if (response.ok) {
-                // Succès : Statut HTTP 200
-                setStatusMessage(data.message);
-                setIsError(false);
-                // 💡 Ici vous stockeriez un Token JWT si Symfony en renvoyait un
+            if (result.success) {
+                setStatusMessage('Connexion réussie');
+                navigate('/');
             } else {
-                // Échec : Statut HTTP 400 ou 401
-                setStatusMessage(data.message || "Erreur de connexion inconnue.");
+                setStatusMessage(result.message || "Email ou mot de passe incorrect");
                 setIsError(true);
             }
 
@@ -61,6 +52,8 @@ const LoginPage = () => {
             setIsError(true);
         }
     };
+
+
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4 font-inter">

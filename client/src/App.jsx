@@ -25,6 +25,8 @@ import Faq from './components/Faq';
 import MvolaPaymentForm from './pages/Paiement';
 import PaiementList from './components/test';
 import Auth from './API/auth/LoginAuth';
+import { AuthProvider } from './contexts/AuthContext';
+import PrivateRoute from './components/PrivateRoute';
 
 
 // Layout pour les pages normales
@@ -40,7 +42,8 @@ function Layout({ children }) {
 
 function App() {
   return (
-    <Routes>
+    <AuthProvider>
+      <Routes>
       {/* Routes avec Layout */}
       <Route
         path="/"
@@ -93,9 +96,11 @@ function App() {
       <Route
         path="/panier"
         element={
-          <Layout>
-            <PanierComponent />
-          </Layout>
+          <PrivateRoute>
+            <Layout>
+              <PanierComponent />
+            </Layout>
+          </PrivateRoute>
         }
       />
       <Route
@@ -115,6 +120,18 @@ function App() {
         }
       />
 
+      {/* Routes protégées */}
+      <Route
+        path="/favoris"
+        element={
+          <PrivateRoute>
+            <Layout>
+              <PanierComponent />
+            </Layout>
+          </PrivateRoute>
+        }
+      />
+
       {/* Routes spéciales sans Layout */}
       <Route path="/login" element={<LoginPage />} />
       <Route path="/paiement" element={<MvolaPaymentForm />} />
@@ -126,6 +143,7 @@ function App() {
       {/* Route fallback (URL inexistantes) */}
       <Route path="*" element={<PaiementList />} />
     </Routes>
+    </AuthProvider>
   );
 }
 

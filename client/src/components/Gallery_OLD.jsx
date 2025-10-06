@@ -1,0 +1,214 @@
+import React, { useState, useEffect } from "react";
+import Slider from "react-slick";
+import { Heart, Eye, Search } from "lucide-react";
+import api from "../API/url";
+import { toast } from "react-toastify";
+
+// Categories disponibles
+const categories = [
+  { id: "all", name: "Tous les produits" },
+  { id: "Visage", name: "Soins du visage" },
+  { id: "Cheveux", name: "Soins des cheveux" },
+  { id: "Corps", name: "Soins du corps" },
+  { id: "Parfum", name: "Parfums" }
+];
+
+// Tri disponible
+const sortOptions = [
+  { id: "price-asc", name: "Prix croissant" },
+  { id: "price-desc", name: "Prix décroissant" },
+  { id: "name-asc", name: "Nom A-Z" },
+  { id: "name-desc", name: "Nom Z-A" }
+];
+  {
+    id: 1,
+    name: "Crème Hydratante Aloe Vera",
+    image: "public/image/heros.jpg",
+    discount: "Jusqu'à -20%",
+    rating: 5.0,
+    reviews: 320,
+    price: 25,
+    category: "soin",
+  },
+  {
+    id: 2,
+    name: "Shampoing Naturel Argan",
+    image: "public/image/heros.jpg",
+    discount: "Promo -15%",
+    rating: 4.8,
+    reviews: 210,
+    price: 18,
+    category: "cheveux",
+  },
+  {
+    id: 3,
+    name: "Savon Artisanal Bio",
+    image: "public/image/heros.jpg",
+    discount: "Lot spécial",
+    rating: 4.7,
+    reviews: 150,
+    price: 6,
+    category: "savon",
+  },
+  {
+    id: 4,
+    name: "Huile de Massage Relaxante",
+    image: "public/image/heros.jpg",
+    discount: "Jusqu'à -10%",
+    rating: 4.9,
+    reviews: 98,
+    price: 30,
+    category: "soin",
+  },
+];
+
+// Carte produit
+function ProductCard({ product }) {
+  return (
+    <div className="relative rounded-lg border border-gray-200 bg-white p-6 shadow-sm h-[420px] flex flex-col justify-between hover:shadow-lg transition">
+      {/* Icônes favoris et voir */}
+      <div className="absolute top-3 right-3 flex gap-2">
+        <button className="p-2 bg-white rounded-full shadow hover:bg-orange-100 transition">
+          <Heart size={18} className="text-[#5C4033]" />
+        </button>
+        <button className="p-2 bg-white rounded-full shadow hover:bg-orange-100 transition">
+          <Eye size={18} className="text-[#5C4033]" />
+        </button>
+      </div>
+
+      {/* Image */}
+      <div className="h-44 w-full flex items-center justify-center">
+        <img
+          className="h-full object-contain rounded-2xl"
+          src={product.image}
+          alt={product.name}
+        />
+      </div>
+
+      {/* Infos */}
+      <div className="pt-4 flex flex-col flex-1 justify-between">
+        <span className="me-2 rounded bg-orange-100 px-2.5 py-0.5 text-xs font-medium text-[#5C4033]">
+          {product.discount}
+        </span>
+
+        {/* Nom en chocolat */}
+        <h3 className="mt-2 text-lg font-semibold text-[#5C4033] hover:underline line-clamp-2">
+          {product.name}
+        </h3>
+
+        {/* Rating */}
+        <div className="mt-2 flex items-center gap-2">
+          <div className="flex text-yellow-400">
+            {"★".repeat(Math.round(product.rating))}
+          </div>
+          <p className="text-sm font-medium text-orange-700">{product.rating}</p>
+          <p className="text-sm text-gray-500">({product.reviews} avis)</p>
+        </div>
+
+        {/* Prix + bouton */}
+        <div className="mt-4 flex items-center justify-between gap-4">
+          <p className="text-2xl font-extrabold text-[#5C4033]">
+            {product.price}000 Ar
+          </p>
+          <button className="rounded-lg bg-[#5C4033] px-5 py-2 text-sm font-medium text-white hover:bg-[#7B4B3A]">
+            Ajouter
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Carrousel
+export default function Gallery() {
+  const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState("all");
+
+  // Paramètres carrousel
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 3,
+    slidesToScroll: 1,
+    responsive: [
+      { breakpoint: 1024, settings: { slidesToShow: 2 } },
+      { breakpoint: 640, settings: { slidesToShow: 1 } },
+    ],
+  };
+
+  // Filtrage
+  const filteredProducts = products.filter(
+    (p) =>
+      (filter === "all" || p.category === filter) &&
+      p.name.toLowerCase().includes(search.toLowerCase())
+  );
+
+  return (
+    <section className="bg-gray-50 p-10 py-8 pt-20">
+      <div className="mx-auto max-w-screen-xl px-4 ">
+        {/* Header */}
+        <div className="mb-6 flex flex-col md:flex-row justify-between items-center gap-4">
+          <h2 className="text-2xl font-bold text-[#5C4033]">
+            Produits pour cheveux
+          </h2>
+
+          <div className="flex gap-3">
+            <select
+              className="border rounded px-2 py-1 text-[#5C4033]"
+              value={filter}
+              onChange={(e) => setFilter(e.target.value)}
+            >
+              <option value="all">Tous</option>
+              <option value="soin">Soins</option>
+              <option value="cheveux">Cheveux</option>
+              <option value="savon">Savons</option>
+            </select>
+
+            <input
+              type="text"
+              placeholder="Rechercher un produit..."
+              className="border rounded px-3 py-1 w-64 text-[#5C4033]"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+        </div>
+        <div className="text-left text-stone-800 mb-5 mt-5 pl-5">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo neque id nobis fugiat. Perspiciatis dignissimos eos officia atque hic, expedita quis? Nihil iusto ad placeat maiores odio architecto optio quidem?
+          Cupiditate fugit vitae voluptatem numquam magni, sunt quis t
+        </div>
+
+
+        {/* Carrousel encadré */}
+        <div className="rounded-lg border bg-white p-4 shadow-md">
+          <Slider {...settings} className="m-5">
+            {filteredProducts.map((product) => (
+              <div key={product.id} className="px-2">
+                <ProductCard product={product} />
+              </div>
+            ))}
+          </Slider>
+        </div>
+
+          <h2 className="text-2xl text-left font-bold text-[#5C4033] mt-20 mb-5">
+            Produits pour visage
+          </h2>
+          <div className="text-left text-stone-800 mb-5 mt-5 pl-5">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo neque id nobis fugiat. Perspiciatis dignissimos eos officia atque hic, expedita quis? Nihil iusto ad placeat maiores odio architecto optio quidem?
+          Cupiditate fugit vitae voluptatem numquam magni, sunt quis t
+        </div>
+        {/* Carrousel encadré */}
+        <div className="rounded-lg border bg-white p-4 shadow-md">
+          <Slider {...settings} className="m-5">
+            {filteredProducts.map((product) => (
+              <div key={product.id} className="px-2">
+                <ProductCard product={product} />
+              </div>
+            ))}
+          </Slider>
+        </div>
+      </div>
+    </section>
+  );
+}

@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import api from '../API/url';
 
 // --- Icône SVG pour le bouton Google ---
 const GoogleIcon = () => (
@@ -12,11 +13,30 @@ const GoogleIcon = () => (
 
 
 const LoginPage = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Votre logique de connexion (appel API, etc.) irait ici
-    console.log("Formulaire de connexion soumis");
+    setMessage('');
+    setLoading(true);
+    try {
+      const { data } = await api.post('/api/login', { email, password });
+      if (data?.success) {
+        setMessage('Connexion réussie');
+        // Exemple: stocker les infos client; ajustez selon votre logique
+        localStorage.setItem('client', JSON.stringify(data.client));
+        // window.location.href = '/';
+      } else {
+        setMessage(data?.message || "Échec de la connexion");
+      }
+    } catch (err) {
+      setMessage(err?.response?.data?.message || err.message || 'Erreur de connexion');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -41,6 +61,8 @@ const LoginPage = () => {
             <input
               type="email"
               id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="w-full px-4 py-2 text-gray-700 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus: #6b4226"
               placeholder="votre.email@exemple.com"
               required
@@ -55,6 +77,8 @@ const LoginPage = () => {
             <input
               type="password"
               id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               className="w-full px-4 py-2 text-gray-700 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:#6b4226"
               placeholder="••••••••"
               required
@@ -64,10 +88,14 @@ const LoginPage = () => {
           {/* --- Bouton de connexion --- */}
           <button
             type="submit"
-            className="w-full  bg-[#6b4226] text-white font-bold py-3 px-4 rounded-lg hover:bg-[#975e38] transition-colors duration-300 cursor-pointer"
+            disabled={loading}
+            className={`w-full  text-white font-bold py-3 px-4 rounded-lg transition-colors duration-300 cursor-pointer ${loading ? 'bg-[#6b4226]/60' : 'bg-[#6b4226] hover:bg-[#975e38]'}`}
           >
-            Se connecter
+            {loading ? 'Connexion...' : 'Se connecter'}
           </button>
+          {message && (
+            <p className="mt-3 text-center text-sm">{message}</p>
+          )}
         </form>
 
         {/* --- Diviseur "OU" --- */}

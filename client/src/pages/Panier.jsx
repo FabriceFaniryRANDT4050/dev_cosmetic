@@ -1,14 +1,12 @@
-import React, { useState, useMemo } from 'react';
-import { 
-    FiFilter, 
-    FiSearch, 
-    FiCheckSquare, 
+import React, { useState, useMemo, useEffect } from 'react';
+import {
+    FiFilter,
+    FiSearch,
+    FiCheckSquare,
     FiTrash2,
     FiStar,
-    FiTruck 
+    FiTruck
 } from 'react-icons/fi';
-
-const IMAGE_PLACEHOLDER_URL = 'public/image/beauty.jpg'; 
 
 // --- Codes Promo Mockés ---
 const PROMO_CODES = {
@@ -16,27 +14,7 @@ const PROMO_CODES = {
     'FREE99': 99.00, // 99 Ar de réduction fixe (pour annuler les frais de livraison)
 };
 
-// --- Données Mockées du Panier ---
-const INITIAL_CART_ITEMS = [
-    ...Array(5).fill({
-        name: 'Masque capillaire hydratant',
-        price: 1500.00, 
-        description: 'Véritable Baume De Soin, Cette Base Masque Capillaire Neutre, Certifiée BIO, Riche En Huiles Végétales De Jojoba, Illan Et Beurre de Karité,',
-        quantity: 1, 
-        rating: 4,
-        deliveryTime: 'Il y a 2 heures', 
-        isSelected: true,
-    })
-].map((item, index) => ({ 
-    ...item, 
-    id: index + 1,
-    quantity: index % 3 === 0 ? 2 : 1, 
-    price: 1500.00 + (index * 500), 
-    imageUrl: `${IMAGE_PLACEHOLDER_URL}` 
-}));
-
-
-const formatCurrency = (amount) => `${Math.max(0, amount).toLocaleString('fr-MG', { minimumFractionDigits: 0 })} Ar`; 
+const formatCurrency = (amount) => `${Math.max(0, amount).toLocaleString('fr-MG', { minimumFractionDigits: 0 })} Ar`;
 
 // --- Composant Taux d'Étoiles (inchangé) ---
 const StarRating = ({ rating }) => (
@@ -189,20 +167,25 @@ const OrderSummary = ({ summary, onCheckout, selectedItems, totalAmount, onApply
 
 
 // --- Composant Principal du Panier (CORRIGÉ) ---
-export const PanierComponent = ({ 
+export const PanierComponent = ({
     onCheckout = (items, total) => {
         return(
             { items, total }
-            
+
         )
     }
 }) => {
-    const [items, setItems] = useState(INITIAL_CART_ITEMS);
+    const [items, setItems] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [filterActive, setFilterActive] = useState(false);
     const [promoInput, setPromoInput] = useState('');
-    const [discount, setDiscount] = useState(0); 
+    const [discount, setDiscount] = useState(0);
     const [promoError, setPromoError] = useState(null); // NOUVEL ÉTAT POUR L'ERREUR
+
+    useEffect(() => {
+        const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+        setItems(cart);
+    }, []);
 
     // Réinitialiser la promo lors des changements importants
     const resetPromo = () => {
@@ -213,22 +196,24 @@ export const PanierComponent = ({
 
     // --- LOGIQUE DU PANIER ---
     const handleRemove = (idToRemove) => {
-        setItems(items.filter(item => item.id !== idToRemove));
-        resetPromo(); 
+        const updatedItems = items.filter(item => item.id !== idToRemove);
+        setItems(updatedItems);
+        localStorage.setItem('cart', JSON.stringify(updatedItems));
+        resetPromo();
     };
 
     const handleSelect = (idToSelect) => {
-        setItems(
-            items.map(item =>
-                item.id === idToSelect ? { ...item, isSelected: !item.isSelected } : item
-            )
+        const updatedItems = items.map(item =>
+            item.id === idToSelect ? { ...item, isSelected: !item.isSelected } : item
         );
-        resetPromo(); 
+        setItems(updatedItems);
+        localStorage.setItem('cart', JSON.stringify(updatedItems));
+        resetPromo();
     };
 
     const filteredItems = items.filter(item => {
-        const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesFilter = filterActive ? item.rating > 3 : true; 
+        const matchesSearch = (item.name || '').toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesFilter = filterActive ? item.rating > 3 : true;
         return matchesSearch && matchesFilter;
     });
 

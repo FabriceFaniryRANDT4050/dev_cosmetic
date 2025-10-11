@@ -1,9 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import Pagination from "../components/Pagination";
+import api from "../API/url";
 
-// ====================================================================
-// COMPOSANT RÉUTILISABLE POUR L'ANIMATION (Intersection Observer)
-// ====================================================================
 const ScrollFadeIn = ({ children, direction = 'up', delay = 0, threshold = 0.1 }) => {
     const ref = useRef(null);
     const [isVisible, setIsVisible] = useState(false);
@@ -17,7 +15,7 @@ const ScrollFadeIn = ({ children, direction = 'up', delay = 0, threshold = 0.1 }
                     observer.unobserve(entry.target); 
                 }
             },
-            // Le seuil doit être ajusté pour les petits éléments de liste
+      
             { threshold: threshold } 
         );
 
@@ -64,45 +62,39 @@ const ScrollFadeIn = ({ children, direction = 'up', delay = 0, threshold = 0.1 }
 // ====================================================================
 
 const BlogPage = () => {
-  const produits = [
-    {
-      id: 1,
-      titre: "Masque capillaire",
-      note: 2,
-      description:
-        "Véritable Baume De Soin, Cette Base Masque Capillaire Neutre, Certifiée BIO, Riche En Huiles Végétales De Jojoba, Ricin Et Beurre De Karité,",
-      temps: "il y a 2 heures",
-      image:
-        "https://via.placeholder.com/150x100.png?text=Produit", // Remplace avec ton image
-    },
-    {
-      id: 2,
-      titre: "Masque capillaire",
-      note: 2,
-      description:
-        "Véritable Baume De Soin, Cette Base Masque Capillaire Neutre, Certifiée BIO, Riche En Huiles Végétales De Jojoba, Ricin Et Beurre De Karité,",
-      temps: "il y a 2 heures",
-      image: "https://via.placeholder.com/150x100.png?text=Produit",
-    },
-    {
-      id: 3,
-      titre: "Masque capillaire",
-      note: 2,
-      description:
-        "Véritable Baume De Soin, Cette Base Masque Capillaire Neutre, Certifiée BIO, Riche En Huiles Végétales De Jojoba, Ricin Et Beurre De Karité,",
-      temps: "il y a 2 heures",
-      image: "https://via.placeholder.com/150x100.png?text=Produit",
-    },
-    {
-      id: 4,
-      titre: "Masque capillaire",
-      note: 2,
-      description:
-        "Véritable Baume De Soin, Cette Base Masque Capillaire Neutre, Certifiée BIO, Riche En Huiles Végétales De Jojoba, Ricin Et Beurre De Karité,",
-      temps: "il y a 2 heures",
-      image: "https://via.placeholder.com/150x100.png?text=Produit",
-    },
-  ];
+  const [articles, setArticles] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    (async () => {
+      try {
+        const { data } = await api.get('/api/articles');
+        if (!isMounted) return;
+        const list = Array.isArray(data) ? data : [];
+        // Normaliser les champs attendus par la carte
+        const normalized = list.map((a) => ({
+          id: a.id,
+          titre: a.titre || 'Sans titre',
+          note: 5, // Note par défaut
+          description: a.contenu || 'Pas de description',
+          temps: a.created_At ? new Date(a.created_At).toLocaleDateString('fr-FR') : 'Date inconnue',
+          image: a.image || '/image/beauty.jpg',
+        }));
+        setArticles(normalized);
+        console.log(data);
+
+      } catch (err) {
+        setError(err?.response?.data || err.message);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    })();
+    return () => { isMounted = false; };
+  }, []);
+
+
   
   // Couleurs de votre thème pour le style
   const primaryColor = 'text-[#6b4226]'; 
@@ -148,45 +140,42 @@ const BlogPage = () => {
         <h2 className={`font-bold text-left text-lg mb-4 ${primaryColor}`}>Plus récents</h2>
       </ScrollFadeIn>
 
+      {error && (
+        <p className="text-red-600 text-sm mb-3">Erreur chargement articles: {String(error)}</p>
+      )}
       <div className="space-y-4">
-        {produits.map((produit, index) => (
-          // Animation pour chaque article avec un délai croissant
-          <ScrollFadeIn key={produit.id} direction='up' delay={100 * (index + 1)} threshold={0.3}>
-            <div
-              className="flex flex-col md:flex-row items-start bg-white shadow-lg rounded-xl p-4 transition-transform hover:scale-[1.005] duration-300 border border-stone-100"
-            >
-              {/* Image */}
-              <img
-                src='public\image\beauty.jpg'
-                alt={produit.titre}
-                // Ajustement de la taille de l'image
-                className="w-full h-48 md:w-56 md:h-32 object-cover rounded-lg mb-3 md:mb-0"
-              />
-
-              {/* Contenu texte */}
-              <div className="flex-1 md:ml-4 flex flex-col justify-between">
-                <div>
-                  <div className="flex justify-between items-center">
-                    <h3 className={`font-semibold ${lightAccent} text-xl`}>{produit.titre}</h3>
-                    <span className="text-sm text-stone-500">{produit.temps}</span>
+        {articles.length === 0 && !loading ? (
+          <p className="text-center py-10 text-gray-500">Aucun article trouvé</p>
+        ) : (
+          articles.map((produit, index) => (
+            <ScrollFadeIn key={produit.id || index} direction='up' delay={100 * (index + 1)} threshold={0.3}>
+              <div className="flex flex-col md:flex-row items-start bg-white shadow-lg rounded-xl p-4 transition-transform hover:scale-[1.005] duration-300 border border-stone-100">
+                <img
+                  src={produit.image}
+                  alt={produit.titre || 'Article'}
+                  className="w-full h-48 md:w-56 md:h-32 object-cover rounded-lg mb-3 md:mb-0"
+                />
+                <div className="flex-1 md:ml-4 flex flex-col justify-between">
+                  <div>
+                    <div className="flex justify-between items-center">
+                      <h3 className={`font-semibold ${lightAccent} text-xl`}>{produit.titre}</h3>
+                      <span className="text-sm text-stone-500">{produit.temps}</span>
+                    </div>
+                    <div className="text-amber-500 text-2xl text-left mb-1">
+                      {"★".repeat(produit.note) + "☆".repeat(5 - produit.note)}
+                    </div>
+                    <p className="text-sm text-left text-stone-600 leading-relaxed">{produit.description}</p>
                   </div>
-                  {/* Étoiles */}
-                  <div className="text-amber-500 text-2xl text-left mb-1">
-                    {"★".repeat(produit.note) + "☆".repeat(5 - produit.note)}
+                  <div className="mt-4 flex">
+                    <button className={`${accentButton} cursor-pointer text-white px-5 py-2 rounded-full text-sm font-semibold transition duration-200`}>
+                      Lire l'article
+                    </button>
                   </div>
-                  <p className="text-sm text-left text-stone-600 leading-relaxed">{produit.description}</p>
-                </div>
-
-                {/* Bouton bien centré */}
-                <div className="mt-4 flex">
-                  <button className={`${accentButton} cursor-pointer text-white px-5 py-2 rounded-full text-sm font-semibold transition duration-200`}>
-                    Lire l'article
-                  </button>
                 </div>
               </div>
-            </div>
-          </ScrollFadeIn>
-        ))}
+            </ScrollFadeIn>
+          ))
+        )}
       </div>
       
 

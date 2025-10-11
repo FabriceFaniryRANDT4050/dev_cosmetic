@@ -1,7 +1,57 @@
-import React from 'react';
+import React, { useState } from 'react';
 // import { ChevronDownIcon } from '@heroicons/react/16/solid' // Icône toujours commentée
+import api from '../API/url';
 
 export default function ContactComponent() {
+  const [formData, setFormData] = useState({
+    Nom: '',
+    prenom: '',
+    address: '',
+    email: '',
+    'phone-number': '',
+    operator: 'Orange',
+    message: '',
+    'agree-to-policies': false,
+  });
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData({
+      ...formData,
+      [name]: type === 'checkbox' ? checked : value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage('');
+
+    try {
+      const response = await api.post('/api/contact', formData);
+      if (response.data.success) {
+        setMessage('Message envoyé avec succès !');
+        setFormData({
+          Nom: '',
+          prenom: '',
+          address: '',
+          email: '',
+          'phone-number': '',
+          operator: 'Orange',
+          message: '',
+          'agree-to-policies': false,
+        });
+      } else {
+        setMessage(response.data.message || 'Erreur lors de l\'envoi');
+      }
+    } catch (error) {
+      setMessage('Erreur lors de l\'envoi du message');
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     // CONTENEUR GLOBAL: Changement de bg-gray-900 à bg-[#fdf6ec] (beige très clair)
     <div className="isolate bg-[#fdf6ec] px-6 py-24 sm:py-32 lg:px-8">
@@ -34,7 +84,7 @@ export default function ContactComponent() {
         </p>
       </div>
 
-      <form action="#" method="POST" className="mx-auto mt-16 max-w-xl sm:mt-20">
+      <form onSubmit={handleSubmit} className="mx-auto mt-16 max-w-xl sm:mt-20">
         <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
           
           {/* Nom */}
@@ -49,6 +99,8 @@ export default function ContactComponent() {
                 name="Nom"
                 type="text"
                 autoComplete="given-name"
+                value={formData.Nom}
+                onChange={handleChange}
                 // INPUT STYLING: bg-white, border-[#d4bfa4] et focus:outline-[#8b5e3c]
                 className="block w-full rounded-md border-0 bg-white/70 px-3.5 py-2 text-base text-[#6b4226] shadow-sm ring-1 ring-inset ring-[#d4bfa4] placeholder:text-stone-400 focus:ring-2 focus:ring-inset focus:ring-[#8b5e3c] sm:text-sm/6"
               />
@@ -66,6 +118,8 @@ export default function ContactComponent() {
                 name="prenom"
                 type="text"
                 autoComplete="family-name"
+                value={formData.prenom}
+                onChange={handleChange}
                 className="block w-full rounded-md border-0 bg-white/70 px-3.5 py-2 text-base text-[#6b4226] shadow-sm ring-1 ring-inset ring-[#d4bfa4] placeholder:text-stone-400 focus:ring-2 focus:ring-inset focus:ring-[#8b5e3c] sm:text-sm/6"
               />
             </div>
@@ -82,6 +136,8 @@ export default function ContactComponent() {
                 name="address"
                 type="text"
                 autoComplete="address-line1"
+                value={formData.address}
+                onChange={handleChange}
                 className="block w-full rounded-md border-0 bg-white/70 px-3.5 py-2 text-base text-[#6b4226] shadow-sm ring-1 ring-inset ring-[#d4bfa4] placeholder:text-stone-400 focus:ring-2 focus:ring-inset focus:ring-[#8b5e3c] sm:text-sm/6"
               />
             </div>
@@ -98,6 +154,8 @@ export default function ContactComponent() {
                 name="email"
                 type="email"
                 autoComplete="email"
+                value={formData.email}
+                onChange={handleChange}
                 className="block w-full rounded-md border-0 bg-white/70 px-3.5 py-2 text-base text-[#6b4226] shadow-sm ring-1 ring-inset ring-[#d4bfa4] placeholder:text-stone-400 focus:ring-2 focus:ring-inset focus:ring-[#8b5e3c] sm:text-sm/6"
               />
             </div>
@@ -119,6 +177,8 @@ export default function ContactComponent() {
                     name="operator"
                     autoComplete="tel-country-code" // AutoComplete plus précis
                     aria-label="Opérateur"
+                    value={formData.operator}
+                    onChange={handleChange}
                     // STYLING SELECT : Ajusté pour le thème clair
                     className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-transparent py-2 pr-7 pl-3.5 text-base text-[#6b4226] focus:ring-0 focus:outline-none sm:text-sm/6"
                   >
@@ -134,7 +194,9 @@ export default function ContactComponent() {
                   name="phone-number"
                   type="tel" // Type plus précis
                   autoComplete="tel"
-                  placeholder="03X XX XX XXX" 
+                  placeholder="03X XX XX XXX"
+                  value={formData['phone-number']}
+                  onChange={handleChange}
                   // STYLING INPUT: bg-transparent, texte adapté au thème
                   className="block min-w-0 grow border-l border-[#d4bfa4] bg-transparent py-2 pr-3 pl-3 text-base text-[#6b4226] placeholder:text-stone-400 focus:outline-none sm:text-sm/6"
                 />
@@ -152,9 +214,10 @@ export default function ContactComponent() {
                 id="message"
                 name="message"
                 rows={4}
+                value={formData.message}
+                onChange={handleChange}
                 // STYLING TEXTAREA
                 className="block w-full rounded-md border-0 bg-white/70 px-3.5 py-2 text-base text-[#6b4226] shadow-sm ring-1 ring-inset ring-[#d4bfa4] placeholder:text-stone-400 focus:ring-2 focus:ring-inset focus:ring-[#8b5e3c] sm:text-sm/6"
-                defaultValue={''}
               />
             </div>
           </div>
@@ -169,6 +232,8 @@ export default function ContactComponent() {
                         id="agree-to-policies"
                         name="agree-to-policies"
                         type="checkbox"
+                        checked={formData['agree-to-policies']}
+                        onChange={handleChange}
                         aria-label="Accepter la politique de confidentialité"
                         className="absolute inset-0 appearance-none focus:outline-hidden"
                     />
@@ -189,13 +254,20 @@ export default function ContactComponent() {
         <div className="mt-10">
           <button
             type="submit"
+            disabled={loading}
             // BOUTON STYLING: bg-indigo-500 remplacé par bg-[#8b5e3c] et hover:bg-[#6b4226]
-            className="block w-full rounded-md bg-[#8b5e3c] px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-md hover:bg-[#6b4226] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8b5e3c] transition duration-200"
+            className="block w-full rounded-md bg-[#8b5e3c] px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-md hover:bg-[#6b4226] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8b5e3c] transition duration-200 disabled:opacity-50"
           >
-            Envoyer le Message
+            {loading ? 'Envoi en cours...' : 'Envoyer le Message'}
           </button>
         </div>
       </form>
+
+      {message && (
+        <div className={`mt-4 text-center text-sm ${message.includes('succès') ? 'text-green-600' : 'text-red-600'}`}>
+          {message}
+        </div>
+      )}
     </div>
   )
 }

@@ -11,7 +11,7 @@ export default function Header() {
         <div className="flex-shrink-0">
           <Link to="/" className="flex items-center">
             <img
-              src="public\image\MonLogo.png"
+              src="/image/MonLogo.png"
               alt="Harena Cosmetique Beauté"
               className="h-12 w-auto"
             />

@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import api from '../API/url';
 
-// --- Données Statiques du Produit (pour simuler la source de données) ---
+// --- Données Statiques du Produit (fallback) ---
 const ProductData = {
   title: "Beurre de soin cheveux Céramide NG & Acide hyaluronique",
   rating: 4.3,
@@ -178,18 +180,82 @@ const ReviewCard = ({ review }) => {
 };
 
 // --- Composant Principal de la Fiche Technique ---
-const DetailProduit = () => {
+const DetailProduit = ({ id }) => {
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState('Présentation');
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const tabs = Object.keys(ProductData.tabsContent);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    let isMounted = true;
+    (async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        if (id) {
+          const { data } = await api.get(`/produits/${id}`);
+          if (!isMounted) return;
+          setProduct(data);
+        } else {
+          const { data } = await api.get('/produits');
+          if (!isMounted) return;
+          const first = Array.isArray(data) ? data[0] : null;
+          setProduct(first || null);
+        }
+      } catch (err) {
+        setError(err?.response?.data || err.message);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    })();
+    return () => { isMounted = false; };
+  }, [id]);
 
   const handleQuantityChange = (delta) => {
     setQuantity(prev => Math.max(1, prev + delta));
   };
 
+  const addToCart = () => {
+    if (!product) return;
+    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    const existing = cart.find(item => item.id === product.id);
+    if (existing) {
+      existing.quantity += quantity;
+    } else {
+      cart.push({
+        id: product.id,
+        name: dataTitle,
+        price: dataPrice,
+        imageUrl: mainImage,
+        quantity: quantity,
+        description: ProductData.shortDescription,
+        rating: ProductData.rating,
+        deliveryTime: 'Maintenant',
+        isSelected: true,
+      });
+    }
+    localStorage.setItem('cart', JSON.stringify(cart));
+    navigate('/panier');
+  };
+
+  const dataTitle = product?.nom || product?.name || ProductData.title;
+  const dataPrice = product?.prix || product?.price || ProductData.price;
+  const mainImage = product?.image || product?.photo || 'image/heros.jpg';
+  const image_mini1 = product?.image_mini1 || product?.photo || 'image/beauty.jpg';
+  const image_mini2 = product?.image_mini2 || product?.photo || 'image/beauty.jpg';
+  const image_mini3 = product?.image_mini3 || product?.photo || 'image/beauty.jpg';
+
   return (
     <div className="max-w-7xl mx-auto bg-white font-sans shadow-2xl rounded-xl overflow-hidden">
-      
+      {error && (
+        <div className="p-4 bg-red-100 text-red-700">Erreur: {String(error)}</div>
+      )}
+      {loading && (
+        <div className="p-4">Chargement...</div>
+      )}
       {/* SECTION HAUTE : Image et Informations d'Achat (Grille 2 colonnes) */}
       <div className="grid lg:grid-cols-2 gap-12 p-6 md:p-12 border-b border-gray-100">
 
@@ -198,10 +264,9 @@ const DetailProduit = () => {
             {/* Image Principale */}
             <div className="w-full max-w-lg mb-6">
                 <img 
-                    src="image/heros.jpg"
-                    alt={ProductData.title} 
+                    src={mainImage}
+                    alt={dataTitle} 
                     className="w-full h-100 object-cover rounded-lg shadow-xl hover:shadow-2xl transition duration-300"
-                    // Placeholder Aroma-Zone image URL: https://cdn.aroma-zone.com/d_default_placeholder.png/c_fill,q_auto,f_auto,w_626,h_626/b_none/v1/ctcdn/e5f608cf-85e6-4db5-8d00-81b1960857bb/Catalogue_Beurre-de--fUdmoG-e.png
                 />
             </div>
             
@@ -209,26 +274,23 @@ const DetailProduit = () => {
             <div className="flex space-x-3">
                 <div className={`w-16 h-16 flex justify-center items-center border-2 rounded-lg cursor-pointer border-gray-200 hover:border-gray-400`}>
                     <img 
-                        src="image/beauty.jpg"
-                        alt={ProductData.title} 
+                        src={image_mini1}
+                        alt={dataTitle} 
                         className="w-15 h-15 object-cover rounded shadow-xl hover:shadow-2xl transition duration-300"
-                        // Placeholder Aroma-Zone image URL: https://cdn.aroma-zone.com/d_default_placeholder.png/c_fill,q_auto,f_auto,w_626,h_626/b_none/v1/ctcdn/e5f608cf-85e6-4db5-8d00-81b1960857bb/Catalogue_Beurre-de--fUdmoG-e.png
                     />
                 </div>
                 <div className={`w-16 h-16 flex justify-center items-center border-2 rounded-lg cursor-pointer border-gray-200 hover:border-gray-400`}>
                       <img 
-                        src="image/pexel.jpeg"
-                        alt={ProductData.title} 
+                        src={image_mini2}
+                        alt={dataTitle}
                         className="w-15 h-15 object-cover rounded shadow-xl hover:shadow-2xl transition duration-300"
-                        // Placeholder Aroma-Zone image URL: https://cdn.aroma-zone.com/d_default_placeholder.png/c_fill,q_auto,f_auto,w_626,h_626/b_none/v1/ctcdn/e5f608cf-85e6-4db5-8d00-81b1960857bb/Catalogue_Beurre-de--fUdmoG-e.png
                     />
                 </div>
                 <div className={`w-16 h-16 border-2 flex justify-center items-center rounded-lg cursor-pointer border-gray-200 hover:border-gray-400`}>
                     <img 
-                        src="image/heros.jpg"
-                        alt={ProductData.title} 
+                        src={image_mini3}
+                        alt={dataTitle}
                         className="w-15 h-15 object-cover rounded shadow-xl hover:shadow-2xl transition duration-300"
-                        // Placeholder Aroma-Zone image URL: https://cdn.aroma-zone.com/d_default_placeholder.png/c_fill,q_auto,f_auto,w_626,h_626/b_none/v1/ctcdn/e5f608cf-85e6-4db5-8d00-81b1960857bb/Catalogue_Beurre-de--fUdmoG-e.png
                     />
                 </div>
             </div>
@@ -238,8 +300,9 @@ const DetailProduit = () => {
         <div className="space-y-6 text-left">
           
           <h1 className="text-4xl font-extrabold leading-snug" style={{ color: COLOR_TEXT }}>
-            {ProductData.title}
+            {dataTitle}
           </h1>
+          <p className="text-sm text-gray-500">ID Produit: {id}</p>
 
           {/* Évaluation */}
           <div className="flex items-center space-x-4 pb-4 border-b border-gray-100">
@@ -256,7 +319,7 @@ const DetailProduit = () => {
               <div className="flex items-end justify-between">
                 <div className="flex items-baseline" style={{ color: COLOR_TEXT }}>
                     <span className="text-6xl font-black">
-                        {ProductData.price.toFixed(2).replace('.', ',')}
+                        {Number(dataPrice).toFixed(2).replace('.', ',')}
                     </span>
                     <span className="text-4xl font-black">Ar</span>
                 </div>
@@ -290,12 +353,13 @@ const DetailProduit = () => {
                     </button>
                 </div>
 
-                <button 
+                <button
+                    onClick={addToCart}
                     className={`flex-1 py-4 px-4 text-white font-bold rounded-full shadow-lg transition duration-300 transform hover:scale-[1.01] cursor-pointer`}
                     style={{ backgroundColor: COLOR_PRIMARY }}
                     aria-label="Ajouter au panier"
                 >
-                    <span className="text-xl">+</span> <a href='/panier' className="ml-2 uppercase tracking-wide">Ajouter au panier</a>
+                    <span className="text-xl">+</span> <span className="ml-2 uppercase tracking-wide">Ajouter au panier</span>
                 </button>
               </div>
               <p className="text-sm text-gray-500 pt-2">Livraison offerte dès 20.000 Ar d'achat.</p>

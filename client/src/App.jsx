@@ -82,6 +82,14 @@ function App() {
         }
       />
       <Route
+        path="/produit/:id"
+        element={
+          <Layout>
+            <Produit />
+          </Layout>
+        }
+      />
+      <Route
         path="/catalogue"
         element={
           <Layout>

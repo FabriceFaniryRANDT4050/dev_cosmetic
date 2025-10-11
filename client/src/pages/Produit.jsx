@@ -1,7 +1,12 @@
-import Siderbar from "../components/Sidebar";
-import  DetailProduit  from "../components/DetailProduit";
+import React from "react";
+import { useParams } from "react-router-dom";
+import DetailProduit from "../components/DetailProduit";
+
 export default function Produit(){
-    return(
-        <div><DetailProduit/></div>
-    )
+  const { id } = useParams();
+  return (
+    <div>
+      <DetailProduit id={id} />
+    </div>
+  );
 }
